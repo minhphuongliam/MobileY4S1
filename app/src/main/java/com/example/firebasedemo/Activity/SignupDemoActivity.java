@@ -1,17 +1,20 @@
-package com.example.firebasedemo;
+package com.example.firebasedemo.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.firebasedemo.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 
-public class SignupDemo extends AppCompatActivity {
+public class SignupDemoActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText, confirmPasswordEditText;
     private Button signUpButton, loginButtonSignup; // Add loginButtonSignup
     private FirebaseAuth mAuth;
@@ -40,10 +43,15 @@ public class SignupDemo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navigate to LoginDemo activity
-                startActivity(new Intent(SignupDemo.this, LoginDemo.class));
+                startActivity(new Intent(SignupDemoActivity.this, LoginDemoActivity.class));
                 finish(); // Optionally finish the current activity
             }
         });
+        //full screen
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        );
     }
 
     private void createAccount() {
@@ -70,15 +78,15 @@ public class SignupDemo extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && task.getResult().getSignInMethods().isEmpty()) {
                         mAuth.createUserWithEmailAndPassword(email, password)
-                                .addOnCompleteListener(SignupDemo.this, task1 -> {
+                                .addOnCompleteListener(SignupDemoActivity.this, task1 -> {
                                     if (task1.isSuccessful()) {
-                                        Toast.makeText(SignupDemo.this, "Registration successful.",
+                                        Toast.makeText(SignupDemoActivity.this, "Registration successful.",
                                                 Toast.LENGTH_SHORT).show();
                                         // Return to login page after success
-                                        startActivity(new Intent(SignupDemo.this, LoginDemo.class));
+                                        startActivity(new Intent(SignupDemoActivity.this, LoginDemoActivity.class));
                                         finish();
                                     } else {
-                                        Toast.makeText(SignupDemo.this, "Registration failed: " +
+                                        Toast.makeText(SignupDemoActivity.this, "Registration failed: " +
                                                         task1.getException().getMessage(),
                                                 Toast.LENGTH_LONG).show();
                                     }
@@ -86,10 +94,10 @@ public class SignupDemo extends AppCompatActivity {
                     } else {
                         Exception exception = task.getException();
                         if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-                            Toast.makeText(SignupDemo.this, "Invalid email format. Please enter a correct email.",
+                            Toast.makeText(SignupDemoActivity.this, "Invalid email format. Please enter a correct email.",
                                     Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(SignupDemo.this, "An error occurred: " + exception.getMessage(),
+                            Toast.makeText(SignupDemoActivity.this, "An error occurred: " + exception.getMessage(),
                                     Toast.LENGTH_LONG).show();
                         }
                     }

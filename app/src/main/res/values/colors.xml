@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#8692f7</color>
     <color name="grey">#A6929292</color>
+    <color name="main_color">#252b45</color>
+    <color name="black2">#28292b</color>
+    <color name="orange">#d14706</color>
 </resources>

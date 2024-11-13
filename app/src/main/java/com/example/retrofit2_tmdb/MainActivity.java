@@ -7,7 +7,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.retrofit2_tmdb.model.Movie;
+import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.request.MovieApi;
 import com.example.retrofit2_tmdb.request.Service;
 import com.example.retrofit2_tmdb.response.MovieListResponse;
@@ -29,16 +29,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Log all the now showing movies
-        for(int movieId : nowShowing){
-            getRetrofitResponseById(movieId);
-        }
-
         Button btn = findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getRetrofitResponse();
+                // Log all the now showing movies
+                for(int movieId : nowShowing){
+                    getRetrofitResponseById(movieId);
+                }
             }
         });
 
@@ -46,13 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void getRetrofitResponseById(int movie_id){
         MovieApi movieApi = Service.getMovieApi();
-        Call<Movie> responsecall = movieApi.getMovie(movie_id, TmdbApiConstants.API_KEY);
+        Call<MovieDTO> responsecall = movieApi.getMovie(movie_id, TmdbApiConstants.API_KEY);
 
-        responsecall.enqueue(new Callback<Movie>() {
+        responsecall.enqueue(new Callback<MovieDTO>() {
             @Override
-            public void onResponse(Call<Movie> call, Response<Movie> response) {
+            public void onResponse(Call<MovieDTO> call, Response<MovieDTO> response) {
                 if(response.code() == 200){
-                    Movie movie = response.body();
+                    MovieDTO movie = response.body();
                     Log.v("Tag" , "The Response: " + movie);
                 }
                 else {
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Movie> call, Throwable throwable) {
+            public void onFailure(Call<MovieDTO> call, Throwable throwable) {
 
             }
         });
@@ -78,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<MovieListResponse> call, Response<MovieListResponse> response) {
                 if(response.code() == 200){
                     Log.v("Tag", "the response" + response.body().toString());
-                    List<Movie> movies = new ArrayList<>(response.body().getMovies());
-                    for(Movie movie : movies){
+                    List<MovieDTO> movies = new ArrayList<>(response.body().getMovies());
+                    for(MovieDTO movie : movies){
                         String posterPath = TmdbApiConstants.IMG_URL + movie.getPosterPath();
                         Log.v("Tag", "Poster path: " + posterPath);
                     }

@@ -1,6 +1,6 @@
 package com.example.retrofit2_tmdb.request;
 
-import com.example.retrofit2_tmdb.model.Movie;
+import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.response.MovieListResponse;
 
 import retrofit2.Call;
@@ -18,10 +18,10 @@ public interface MovieApi  {
         @Query("page") String page
     );
 
-    // Get Movie by Id
+    // Get MovieDTO by Id
     // https://api.themoviedb.org/3/movie/75780?language=en-US&api_key=d0dcad5c634786c89fc9db3502f7bfa4
     @GET("3/movie/{movie_id}?")
-    Call<Movie> getMovie(
+    Call<MovieDTO> getMovie(
         @Path("movie_id") int movie_id,
         @Query("api_key") String api_key
     );

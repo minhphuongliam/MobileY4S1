@@ -1,8 +1,8 @@
-package com.example.retrofit2_tmdb.model;
+package com.example.retrofit2_tmdb.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Genre {
+public class GenreDTO {
     @SerializedName("id")
     private int id;
 
@@ -27,7 +27,7 @@ public class Genre {
 
     @Override
     public String toString() {
-        return "Genre{" +
+        return "GenreDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';

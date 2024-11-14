@@ -1,11 +1,17 @@
 package com.example.firebasedemo.Activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import com.example.firebasedemo.Adapter.MovieAdapter;
 import com.example.firebasedemo.Model.Movie;
@@ -20,6 +26,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class HomeActivity extends AppCompatActivity {
 
     private static final int[] nowShowing = {1376716, 1372737, 1358033, 1354039, 1314450, 1263992, 1369768, 1312078, 1184918, 912649, 698687, 889737, 1079091, 1244492, 947938};
@@ -27,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<Movie> nowShowingMovies = new ArrayList<>();
     private ArrayList<Movie> upComingMovies = new ArrayList<>();
     private RecyclerView recyclerViewTopMovies, recyclerViewUpcoming;
-
+    private TextView textEmail;
 
 
     @Override
@@ -38,11 +45,21 @@ public class HomeActivity extends AppCompatActivity {
         recyclerViewTopMovies = findViewById(R.id.recyclerViewTopMovies);
         recyclerViewUpcoming = findViewById(R.id.recyclerViewUpcomming);
 
+        // thông tin email
+        textEmail = findViewById(R.id.textEmail);
+        //lấy từ sharedPref rồi lưu
+        setEmail();
+
+        //nút đăng xuất
+        ImageView logoutIcon = findViewById(R.id.logoutIcon);
+        logoutIcon.setOnClickListener(v -> logoutUser());
+
         recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         fetchMovieDetails(nowShowingMovies, "Now Showing");
         fetchMovieDetails(upComingMovies, "Up Coming");
+
     }
 
     // Fetch movie details from TMDB API
@@ -91,5 +108,71 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             return upComing; // Add more IDs
         }
+    }
+    //phương thức set Email
+    private void setEmail()
+    {
+        try{
+            // Tạo key Master nếu chưa có
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            // Đọc EncryptedSharedPreferences
+            SharedPreferences encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    "UserPrefs",
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            // lấy email từ shared rồi lưu
+            String email = encryptedSharedPreferences.getString("email",null);
+
+            if(email != null)
+            {
+                textEmail.setText(email);
+            }else
+            {
+                textEmail.setText("Email");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            textEmail.setText("Email Error");
+        }
+    }
+    // Phương thức logout
+    private void logoutUser() {
+        try {
+            // Tạo MasterKey để mã hóa dữ liệu
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+
+            // Lấy EncryptedSharedPreferences
+            SharedPreferences encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    "UserPrefs", // Tên file sharedPreferences
+                    masterKeyAlias, // Master key
+                    this, // Context
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, // Mã hóa key
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM // Mã hóa value
+            );
+
+            // Xóa thông tin người dùng
+            SharedPreferences.Editor editor = encryptedSharedPreferences.edit();
+            editor.clear(); // Xóa tất cả thông tin người dùng
+            editor.apply(); // Lưu thay đổi
+
+            // Thông báo cho người dùng và chuyển hướng về trang login
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+            navigateToLogin();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error during logout", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Phương thức chuyển hướng về LoginActivity
+    private void navigateToLogin() {
+        Intent intent = new Intent(HomeActivity.this, LoginDemoActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Xóa lịch sử các Activity phía sau LoginActivity
+        startActivity(intent);
+        finish();
     }
 }

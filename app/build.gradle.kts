@@ -89,4 +89,6 @@ dependencies {
     // glide for fetching image
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+    /// encrytpted sharedPreference
+    implementation ("androidx.security:security-crypto:1.1.0-alpha04")
 }

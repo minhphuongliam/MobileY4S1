@@ -25,5 +25,4 @@ public interface MovieApi  {
             @Query("api_key") String api_key
     );
 
-    // Get M
 }

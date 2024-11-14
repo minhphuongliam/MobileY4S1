@@ -3,6 +3,8 @@ package com.example.firebasedemo.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -26,6 +28,12 @@ public class Movie implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
 
+    @SerializedName("backdrop_path")
+    private String backdropPath;
+
+    @SerializedName("runtime")
+    private Integer runtime;
+
     @SerializedName("genres")
     private List<Genre> genres;
 
@@ -35,17 +43,20 @@ public class Movie implements Parcelable {
     @SerializedName("overview")
     private String movieOverview;
 
-    public Movie(String title, Integer movieId, boolean adult, String originalTitle, String posterPath, String releaseDate, List<Genre> genres, Float voteAvarage, String movieOverview) {
+    public Movie(String title, Integer movieId, boolean adult, String originalTitle, String posterPath, String releaseDate, String backdropPath, Integer runtime, List<Genre> genres, Float voteAvarage, String movieOverview) {
         this.title = title;
         this.movieId = movieId;
         this.adult = adult;
         this.originalTitle = originalTitle;
         this.posterPath = posterPath;
         this.releaseDate = releaseDate;
+        this.backdropPath = backdropPath;
+        this.runtime = runtime;
         this.genres = genres;
         this.voteAvarage = voteAvarage;
         this.movieOverview = movieOverview;
     }
+
 
     protected Movie(Parcel in) {
         title = in.readString();
@@ -58,39 +69,18 @@ public class Movie implements Parcelable {
         originalTitle = in.readString();
         posterPath = in.readString();
         releaseDate = in.readString();
+        backdropPath = in.readString();
+        if (in.readByte() == 0) {
+            runtime = null;
+        } else {
+            runtime = in.readInt();
+        }
         if (in.readByte() == 0) {
             voteAvarage = null;
         } else {
             voteAvarage = in.readFloat();
         }
         movieOverview = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        if (movieId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(movieId);
-        }
-        dest.writeByte((byte) (adult ? 1 : 0));
-        dest.writeString(originalTitle);
-        dest.writeString(posterPath);
-        dest.writeString(releaseDate);
-        if (voteAvarage == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeFloat(voteAvarage);
-        }
-        dest.writeString(movieOverview);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -177,6 +167,22 @@ public class Movie implements Parcelable {
         this.movieOverview = movieOverview;
     }
 
+    public Integer getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(Integer runtime) {
+        this.runtime = runtime;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -186,9 +192,45 @@ public class Movie implements Parcelable {
                 ", originalTitle='" + originalTitle + '\'' +
                 ", posterPath='" + posterPath + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
+                ", backdropPath='" + backdropPath + '\'' +
+                ", runtime=" + runtime +
                 ", genres=" + genres +
                 ", voteAvarage=" + voteAvarage +
                 ", movieOverview='" + movieOverview + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(title);
+        if (movieId == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(movieId);
+        }
+        parcel.writeByte((byte) (adult ? 1 : 0));
+        parcel.writeString(originalTitle);
+        parcel.writeString(posterPath);
+        parcel.writeString(releaseDate);
+        parcel.writeString(backdropPath);
+        if (runtime == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(runtime);
+        }
+        if (voteAvarage == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeFloat(voteAvarage);
+        }
+        parcel.writeString(movieOverview);
     }
 }

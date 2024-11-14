@@ -1,5 +1,6 @@
 package com.example.retrofit2_tmdb.request;
 
+import com.example.retrofit2_tmdb.dto.CreditDTO;
 import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.response.MovieListResponse;
 
@@ -18,7 +19,7 @@ public interface MovieApi  {
         @Query("page") String page
     );
 
-    // Get MovieDTO by Id
+    // Get MovieDTO by movie id
     // https://api.themoviedb.org/3/movie/75780?language=en-US&api_key=d0dcad5c634786c89fc9db3502f7bfa4
     @GET("3/movie/{movie_id}?")
     Call<MovieDTO> getMovie(
@@ -26,6 +27,12 @@ public interface MovieApi  {
         @Query("api_key") String api_key
     );
 
-    // Get M
+    // Get CreditDTO by movie id
+    // https://api.themoviedb.org/3/movie/75780/credits?language=en-US&api_key=d0dcad5c634786c89fc9db3502f7bfa4
+    @GET("3/movie/{movie_id}/credits?")
+    Call<CreditDTO> getCredit(
+            @Path("movie_id") int movie_id,
+            @Query("api_key") String api_key
+    );
 }
 

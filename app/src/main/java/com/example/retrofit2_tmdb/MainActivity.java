@@ -7,6 +7,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.retrofit2_tmdb.dto.CreditDTO;
+import com.example.retrofit2_tmdb.dto.CrewDTO;
 import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.request.MovieApi;
 import com.example.retrofit2_tmdb.request.Service;
@@ -35,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Log all the now showing movies
                 for(int movieId : nowShowing){
-                    getRetrofitResponseById(movieId);
+                    getMovieDetailsById(movieId);
+                    getCreditById(movieId);
                 }
             }
         });
 
     }
 
-    private void getRetrofitResponseById(int movie_id){
+    private void getMovieDetailsById(int movie_id){
         MovieApi movieApi = Service.getMovieApi();
         Call<MovieDTO> responsecall = movieApi.getMovie(movie_id, TmdbApiConstants.API_KEY);
 
@@ -60,7 +63,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<MovieDTO> call, Throwable throwable) {
+                Log.e("Tag", "Network failure: " + throwable.getMessage());
+            }
+        });
+    }
 
+    private void getCreditById(int movie_id){
+        MovieApi movieApi = Service.getMovieApi();
+        Call<CreditDTO> responsecall = movieApi.getCredit(movie_id, TmdbApiConstants.API_KEY);
+
+        responsecall.enqueue(new Callback<CreditDTO>() {
+            @Override
+            public void onResponse(Call<CreditDTO> call, Response<CreditDTO> response) {
+                if(response.code() == 200){
+                    CreditDTO credit = response.body();
+                    Log.v("Tag" , "The Response: " + credit);
+                }
+                else {
+                    Log.e("Tag", "Error: " + response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CreditDTO> call, Throwable throwable) {
+                Log.e("Tag", "Network failure: " + throwable.getMessage());
             }
         });
     }

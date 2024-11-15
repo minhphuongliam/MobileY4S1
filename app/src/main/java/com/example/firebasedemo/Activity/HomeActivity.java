@@ -124,7 +124,7 @@ public class HomeActivity extends AppCompatActivity {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
             // lấy email từ shared rồi lưu
-            String email = encryptedSharedPreferences.getString("email",null);
+            String email = encryptedSharedPreferences.getString("fullName",null);
 
             if(email != null)
             {

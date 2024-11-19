@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.firebasedemo.Model.Movie;
 import com.example.firebasedemo.R;
-import com.example.firebasedemo.TmdbApiConstants;
+import com.example.firebasedemo.Utils.TmdbApiConstants;
 
 import java.util.List;
 

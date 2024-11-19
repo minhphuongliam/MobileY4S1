@@ -3,8 +3,8 @@ package com.example.firebasedemo.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,18 +14,23 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
 import com.example.firebasedemo.Adapter.MovieAdapter;
+import com.example.firebasedemo.DTO.CreditDTO;
+import com.example.firebasedemo.DTO.MovieDTO;
+import com.example.firebasedemo.DTO.VideoDTO;
+import com.example.firebasedemo.Mapper.MovieMapper;
 import com.example.firebasedemo.Model.Movie;
-import com.example.firebasedemo.MovieApi;
+import com.example.firebasedemo.Request.MovieApi;
 import com.example.firebasedemo.R;
-import com.example.firebasedemo.TmdbApiConstants;
+import com.example.firebasedemo.Request.Service;
+import com.example.firebasedemo.Utils.TmdbApiConstants;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -64,29 +69,95 @@ public class HomeActivity extends AppCompatActivity {
 
     // Fetch movie details from TMDB API
     private void fetchMovieDetails(ArrayList<Movie> movieList, String category) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(TmdbApiConstants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MovieApi movieApi = retrofit.create(MovieApi.class);
+        MovieApi movieApi = Service.getMovieApi();
 
         for (int movieId : getMovieIds(category)) {
-            movieApi.getMovie(movieId, TmdbApiConstants.API_KEY).enqueue(new Callback<Movie>() {
+            Call<MovieDTO> movieCall = movieApi.getMovie(movieId, TmdbApiConstants.API_KEY);
+            Call<CreditDTO> creditCall = movieApi.getCredit(movieId, TmdbApiConstants.API_KEY);
+            Call<VideoDTO> videoCall = movieApi.getVideo(movieId, TmdbApiConstants.API_KEY);
+
+            // Step 1: Fetch the main movie details first
+            movieCall.enqueue(new Callback<MovieDTO>() {
                 @Override
-                public void onResponse(Call<Movie> call, Response<Movie> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        Movie movie = response.body();
-                        movieList.add(movie);
-                        updateRecyclerView(category, movieList);
+                public void onResponse(Call<MovieDTO> call, Response<MovieDTO> movieResponse) {
+                    if (movieResponse.code() == 200) {
+                        MovieDTO movieDTO = movieResponse.body();
+
+                        // Step 2: Make the creditCall and videoCall in parallel
+                        AtomicReference<CreditDTO> creditData = new AtomicReference<>();
+                        AtomicReference<VideoDTO> videoData = new AtomicReference<>();
+
+                        CountDownLatch latch = new CountDownLatch(2); // Wait for 2 parallel calls
+
+                        // Call credits API
+                        creditCall.enqueue(new Callback<CreditDTO>() {
+                            @Override
+                            public void onResponse(Call<CreditDTO> call, Response<CreditDTO> response) {
+                                if (response.code() == 200) {
+                                    creditData.set(response.body());
+                                } else {
+                                    Log.e("Tag", "Credit API Error: " + response.errorBody().toString());
+                                }
+                                latch.countDown();
+                            }
+
+                            @Override
+                            public void onFailure(Call<CreditDTO> call, Throwable t) {
+                                Log.e("Tag", "Credit API Failure: " + t.getMessage());
+                                latch.countDown();
+                            }
+                        });
+
+                        // Call videos API
+                        videoCall.enqueue(new Callback<VideoDTO>() {
+                            @Override
+                            public void onResponse(Call<VideoDTO> call, Response<VideoDTO> response) {
+                                if (response.code() == 200) {
+                                    videoData.set(response.body());
+                                } else {
+                                    Log.e("Tag", "Video API Error: " + response.errorBody().toString());
+                                }
+                                latch.countDown();
+                            }
+
+                            @Override
+                            public void onFailure(Call<VideoDTO> call, Throwable t) {
+                                Log.e("Tag", "Video API Failure: " + t.getMessage());
+                                latch.countDown();
+                            }
+                        });
+
+                        // Step 3: Combine results once both calls are completed
+                        new Thread(() -> {
+                            try {
+                                latch.await(); // Wait for all API calls to finish
+
+                                CreditDTO creditDTO = creditData.get();
+                                VideoDTO videoDTO = videoData.get();
+
+                                // Combine data and map it to the Movie object
+                                Movie movie = MovieMapper.mapToMovie(movieDTO, creditDTO, videoDTO);
+
+                                // Add to list and update RecyclerView
+                                movieList.add(movie);
+
+                                // Update RecyclerView on the main thread
+                                runOnUiThread(() -> updateRecyclerView(category, movieList));
+
+                                Log.v("Tag", "Added movie: " + movie);
+                            } catch (InterruptedException e) {
+                                Log.e("Tag", "Error waiting for API responses: " + e.getMessage());
+                            }
+                        }).start();
+
                     } else {
-                        Toast.makeText(HomeActivity.this, "Failed to fetch movie details", Toast.LENGTH_SHORT).show();
+                        Log.e("Tag", "Movie API Error: " + movieResponse.errorBody().toString());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Movie> call, Throwable t) {
-                    Toast.makeText(HomeActivity.this, "Error fetching movie details", Toast.LENGTH_SHORT).show();
+                public void onFailure(Call<MovieDTO> call, Throwable t) {
+                    Log.e("Tag", "Movie API Failure: " + t.getMessage());
                 }
             });
         }

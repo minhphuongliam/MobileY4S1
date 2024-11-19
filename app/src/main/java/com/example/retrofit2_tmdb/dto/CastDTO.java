@@ -23,6 +23,26 @@ public class CastDTO implements Parcelable {
     @SerializedName("known_for_department")
     private String knowForDepartment;
 
+    public Integer getCastId() {
+        return castId;
+    }
+
+    public String getCharacter() {
+        return character;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getGender() {
+        return gender;
+    }
+
+    public String getKnowForDepartment() {
+        return knowForDepartment;
+    }
+
     protected CastDTO(Parcel in) {
         if (in.readByte() == 0) {
             castId = null;

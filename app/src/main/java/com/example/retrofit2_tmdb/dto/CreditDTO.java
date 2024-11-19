@@ -29,6 +29,18 @@ public class CreditDTO implements Parcelable {
         crewDTOS = in.createTypedArrayList(CrewDTO.CREATOR);
     }
 
+    public Integer getCreditId() {
+        return creditId;
+    }
+
+    public List<CastDTO> getCastDTOS() {
+        return castDTOS;
+    }
+
+    public List<CrewDTO> getCrewDTOS() {
+        return crewDTOS;
+    }
+
     public static final Creator<CreditDTO> CREATOR = new Creator<CreditDTO>() {
         @Override
         public CreditDTO createFromParcel(Parcel in) {

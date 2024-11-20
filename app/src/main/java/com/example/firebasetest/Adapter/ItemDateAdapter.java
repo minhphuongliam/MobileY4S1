@@ -57,7 +57,30 @@ public class ItemDateAdapter extends RecyclerView.Adapter<ItemDateAdapter.ItemDa
             String wD = "";
 
             mD = "" + calendar.get(Calendar.DAY_OF_MONTH);
-            wD = calendar.get(Calendar.MONTH) + " - " + calendar.get(Calendar.DAY_OF_WEEK);
+            wD = " - " + calendar.get(Calendar.MONTH);
+            switch (calendar.get(Calendar.DAY_OF_WEEK)){
+                case 1:
+                    wD = "Sun" + wD;
+                    break;
+                case 2:
+                    wD = "Mon" + wD;
+                    break;
+                case 3:
+                    wD = "Tue" + wD;
+                    break;
+                case 4:
+                    wD = "Wed" + wD;
+                    break;
+                case 5:
+                    wD = "Thu" + wD;
+                    break;
+                case 6:
+                    wD = "Fri" + wD;
+                    break;
+                case 7:
+                    wD = "Sat" + wD;
+                    break;
+            }
 
             holder.monthDate.setText(mD);
             holder.weekDate.setText(wD);

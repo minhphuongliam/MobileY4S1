@@ -2,12 +2,14 @@ package com.example.firebasetest;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasetest.Adapter.ItemDateAdapter;
@@ -19,6 +21,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity{
         try {
             screenings = dummymaker();
         } catch (ParseException e) {
+            Toast.makeText(MainActivity.this, "Kong load dc data!", Toast.LENGTH_LONG).show();
             throw new RuntimeException(e);
         }
 
@@ -101,20 +106,24 @@ public class MainActivity extends AppCompatActivity{
                 slotSet.get(date).add(time);
             }
         }
+        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet());
+        List<String> timeList = new ArrayList<>(); timeList.addAll(slotSet.get(dateList.get(0)));
+
+        sortDateList(dateList);
+        sortTimeList(timeList);
 
         // nhồi date + time vào recycle view
         RecyclerView dateRecyclerView = findViewById(R.id.dateRecycleView);
         RecyclerView timeRecyclerView = findViewById(R.id.timeRecycleView);
 
-        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet());
-        List<String> timeList = new ArrayList<>(); timeList.addAll(slotSet.get(dateList.get(0)));
+        dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        timeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
         ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
 
         dateRecyclerView.setAdapter(dateAdapter);
         timeRecyclerView.setAdapter(timeAdapter);
-
     }
 
     // sample dummy generator
@@ -166,6 +175,42 @@ public class MainActivity extends AppCompatActivity{
 //                    ", RoomID: " + screening.roomID +
 //                    ", Time: " + dateFormat.format(screening.time));
 //        }
+    }
+
+    // Function to sort the date list
+    public static void sortDateList(List<String> dateList) {
+        Collections.sort(dateList, new Comparator<String>() {
+            SimpleDateFormat onlyDateSDF = new SimpleDateFormat("dd/MM/yyyy");
+            @Override
+            public int compare(String date1, String date2) {
+                try {
+                    Date d1 = onlyDateSDF.parse(date1);
+                    Date d2 = onlyDateSDF.parse(date2);
+                    return d1.compareTo(d2); // Compare the dates
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
+    }
+
+    // Function to sort the time list
+    public static void sortTimeList(List<String> timeList) {
+        Collections.sort(timeList, new Comparator<String>() {
+            SimpleDateFormat onlyTimeSDF = new SimpleDateFormat("HH:mm");
+            @Override
+            public int compare(String time1, String time2) {
+                try {
+                    Date t1 = onlyTimeSDF.parse(time1);
+                    Date t2 = onlyTimeSDF.parse(time2);
+                    return t1.compareTo(t2); // Compare the times
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
     }
 
 }

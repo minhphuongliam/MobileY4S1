@@ -3,6 +3,7 @@ package com.example.firebasedemo.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.firebasedemo.Adapter.AdAdapter;
 import com.example.firebasedemo.Adapter.MovieAdapter;
 import com.example.firebasedemo.DTO.CreditDTO;
 import com.example.firebasedemo.DTO.MovieDTO;
@@ -25,6 +28,8 @@ import com.example.firebasedemo.Request.Service;
 import com.example.firebasedemo.Utils.TmdbApiConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,9 +43,14 @@ public class HomeActivity extends AppCompatActivity {
     private static final int[] upComing = {1376716, 1372737, 1358033, 1354039, 1314450, 1263992, 1369768, 1312078, 1184918, 912649, 698687, 889737, 1079091, 1244492, 947938};
     private ArrayList<Movie> nowShowingMovies = new ArrayList<>();
     private ArrayList<Movie> upComingMovies = new ArrayList<>();
+    private List<String> adUrls = Arrays.asList(
+            "https://i.ibb.co/8djsyhf/advertisement1.jpg",
+            "https://i.ibb.co/3zCqh5x/advertisement2.jpg",
+            "https://i.ibb.co/ys7Ykpc/advertisement3.jpg"
+    );
     private RecyclerView recyclerViewTopMovies, recyclerViewUpcoming;
     private TextView textEmail;
-
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
 
         recyclerViewTopMovies = findViewById(R.id.recyclerViewTopMovies);
         recyclerViewUpcoming = findViewById(R.id.recyclerViewUpcomming);
+        viewPager2 = findViewById(R.id.viewPager2);
 
         // thông tin email
         textEmail = findViewById(R.id.textEmail);
@@ -59,6 +70,8 @@ public class HomeActivity extends AppCompatActivity {
         ImageView logoutIcon = findViewById(R.id.logoutIcon);
         logoutIcon.setOnClickListener(v -> logoutUser());
 
+        setupAdViewPager();
+
         recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -66,6 +79,25 @@ public class HomeActivity extends AppCompatActivity {
         fetchMovieDetails(upComingMovies, "Up Coming");
 
     }
+
+    private void setupAdViewPager() {
+        AdAdapter adAdapter = new AdAdapter(this, adUrls);
+        viewPager2.setAdapter(adAdapter);
+
+        // Automatically swipe pages every 5 seconds
+        final Handler handler = new Handler();
+        Runnable autoSwipe = new Runnable() {
+            @Override
+            public void run() {
+                int currentItem = viewPager2.getCurrentItem();
+                int nextItem = (currentItem + 1) % adAdapter.getItemCount();
+                viewPager2.setCurrentItem(nextItem, true);
+                handler.postDelayed(this, 5000);
+            }
+        };
+        handler.postDelayed(autoSwipe, 5000);
+    }
+
 
     // Fetch movie details from TMDB API
     private void fetchMovieDetails(ArrayList<Movie> movieList, String category) {

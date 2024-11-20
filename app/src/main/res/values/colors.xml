@@ -7,4 +7,10 @@
     <color name="orange">#d14706</color>
     <color name="grey">#989797</color>
     <color name="red">#DF2222</color>
+    <color name="redpink">#F21752</color>
+    <color name="date_selected">#F21752</color>
+    <color name="date_unselected">#989797</color>
+    <color name="seat_available">#989797</color>
+    <color name="seat_unavailable">#28292b</color>
+    <color name="seat_holding">#d14706</color>
 </resources>

@@ -9,12 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasetest.Adapter.ItemDateAdapter;
 import com.example.firebasetest.Adapter.ItemTimeAdapter;
+import com.example.firebasetest.Adapter.SeatAdapter;
 import com.example.firebasetest.Model.Screening;
+import com.example.firebasetest.Model.Seat;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity{
 
     private FirebaseFirestore db;
     private List<Screening> screenings;
+    private List<Seat> seats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,7 @@ public class MainActivity extends AppCompatActivity{
         //Dummy
         try {
             screenings = dummymaker();
+            seats = dummySeat(7);
         } catch (ParseException e) {
             Toast.makeText(MainActivity.this, "Kong load dc data!", Toast.LENGTH_LONG).show();
             throw new RuntimeException(e);
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity{
         sortDateList(dateList);
         sortTimeList(timeList);
 
-        // nhồi date + time vào recycle view
+        // nhồi date + time vào recycle view code test chuc nang
         RecyclerView dateRecyclerView = findViewById(R.id.dateRecycleView);
         RecyclerView timeRecyclerView = findViewById(R.id.timeRecycleView);
 
@@ -124,6 +129,15 @@ public class MainActivity extends AppCompatActivity{
 
         dateRecyclerView.setAdapter(dateAdapter);
         timeRecyclerView.setAdapter(timeAdapter);
+
+        //nhoi seat vao test chuc nang
+        RecyclerView seatRecyclerView = findViewById(R.id.seatRecyclerView);
+//        Toast.makeText(MainActivity.this, "Khong co seat" + seats.size(), Toast.LENGTH_LONG).show();
+        SeatAdapter seatAdapter = new SeatAdapter(this, seats);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 7);
+
+        seatRecyclerView.setAdapter(seatAdapter);
+        seatRecyclerView.setLayoutManager(gridLayoutManager);
     }
 
     // sample dummy generator
@@ -213,4 +227,24 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    // Function to make Seats dummy
+    public static List<Seat> dummySeat(int n) {
+        List<Seat> seats = new ArrayList<>();
+        char row = 'A';  // Row bắt đầu từ A
+        int seatCount = 1;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                String seatNum = row + String.valueOf(seatCount);  // Ví dụ: A1, A2, B1, B2, ...
+                Seat.Status status = Seat.Status.values()[(i + j) % 4];  // Chọn trạng thái vòng từ AVAILABLE đến BOOKED
+
+                seats.add(new Seat(seatNum, status.name().toLowerCase()));
+                seatCount++;
+            }
+            row++;  // Di chuyển sang hàng tiếp theo
+            seatCount = 1;  // Reset số ghế cho hàng mới
+        }
+
+        return seats;
+    }
 }

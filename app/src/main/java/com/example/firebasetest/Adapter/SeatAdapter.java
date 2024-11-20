@@ -1,7 +1,5 @@
 package com.example.firebasetest.Adapter;
 
-import static com.example.firebasetest.Model.Seat.Status;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,7 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     private final List<Seat> seatList;
     private final Context context;
 
-    public SeatAdapter(List<Seat> seatList, Context context) {
+    public SeatAdapter(Context context, List<Seat> seatList) {
         this.seatList = seatList;
         this.context = context;
     }
@@ -28,7 +26,7 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     @NonNull
     @Override
     public SeatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_seat_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_seat_layout, parent, false);
         return new SeatViewHolder(view);
     }
 
@@ -38,15 +36,15 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
 
         switch (seat.getStat()){
             case AVAILABLE:
-                holder.seat.setImageResource(R.drawable.item_seat_available);
+                holder.seatImage.setImageResource(R.drawable.item_seat_available);
                 break;
             case HOLDING:
-                holder.seat.setImageResource(R.drawable.item_seat_holding);
+                holder.seatImage.setImageResource(R.drawable.item_seat_holding);
                 break;
+            default:
             case UNAVAILABLE:
             case BOOKED:
-                holder.seat.setImageResource(R.drawable.item_seat_unavailable);
-                break;
+                holder.seatImage.setImageResource(R.drawable.item_seat_unavailable);
         }
     }
 
@@ -57,10 +55,10 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
 
 
     public static class SeatViewHolder extends RecyclerView.ViewHolder{
-        ImageView seat;
+        ImageView seatImage;
         public SeatViewHolder(@NonNull View itemView) {
             super(itemView);
-            seat = itemView.findViewById(R.id.seatImg);
+            seatImage = itemView.findViewById(R.id.seatImg);
         }
     }
 }

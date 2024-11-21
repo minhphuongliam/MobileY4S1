@@ -17,10 +17,21 @@ import java.util.List;
 public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder> {
     private final List<Seat> seatList;
     private final Context context;
+    private List<Seat> selectedSeat;
+    private OnItemSelectedListener listener;
 
     public SeatAdapter(Context context, List<Seat> seatList) {
         this.seatList = seatList;
         this.context = context;
+    }
+    // Bước 1: Tạo Callback Interface
+    public interface OnItemSelectedListener {
+        void onItemSelected(String time, int position);
+    }
+
+    // Bước 2: Phương thức để cài đặt Listener từ Activity hoặc Fragment
+    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -46,6 +57,26 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
             case BOOKED:
                 holder.seatImage.setImageResource(R.drawable.item_seat_unavailable);
         }
+        // Xử lý sự kiện click
+        holder.itemView.setOnClickListener(v ->{
+            // nếu ghế trống
+            switch (seatList.get(holder.getAdapterPosition()).getStat()){
+                case AVAILABLE:
+                    // cập nhật status thành holding
+                    seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.HOLDING);
+                    // Làm mới tất cả các item
+                    notifyDataSetChanged();
+                    break;
+                case HOLDING:
+                    // cập nhật status thành available
+                    seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.AVAILABLE);
+                    // Làm mới tất cả các item
+                    notifyDataSetChanged();
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     @Override

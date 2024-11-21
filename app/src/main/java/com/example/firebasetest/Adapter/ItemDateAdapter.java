@@ -111,8 +111,12 @@ public class ItemDateAdapter extends RecyclerView.Adapter<ItemDateAdapter.ItemDa
         // Đặt màu nền dựa trên trạng thái được chọn
         if (position == selectedPosition) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.date_selected));
+            holder.monthDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.white));
+            holder.weekDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.white));
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.date_unselected));
+            holder.monthDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+            holder.weekDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
         }
 
         // Xử lý sự kiện click

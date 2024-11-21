@@ -138,22 +138,23 @@ public class MainActivity extends AppCompatActivity{
     // nhồi time vào recycle view code = event trong ItemDateAdapter test chuc nang
 
         // đặt List<String> time bằng event
-        dateAdapter.setOnItemSelectedListener((date, position) -> {
-            // đẩy vào timeList để hiển thị
+        dateAdapter.setOnItemSelectedListener((date, datePos) -> {
             selectedDate = date;
-            timeList.addAll(slotSet.get(dateList.get(position)));
+            // đẩy vào timeList để hiển thị
+            timeList.clear();
+            timeList.addAll(slotSet.get(dateList.get(datePos)));
             //sort
             sortTimeList(timeList);
 
             // lặp lại đoạn nhồi time
             ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
+            timeAdapter.setOnItemSelectedListener((time, timePos) -> {
+                selectedTime = time;
+                // tìm seats trên fire base đẩy vào seat adapter;
+                Toast.makeText(MainActivity.this, "Date + Time: " + selectedDate + " " + selectedTime, Toast.LENGTH_LONG).show();
+            });
             timeRecyclerView.setAdapter(timeAdapter);
         });
-
-
-        //nhồi vào adapter (default test chứuc năng)
-        ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
-        timeRecyclerView.setAdapter(timeAdapter);
 
         //nhoi seat vao test chuc nang
         RecyclerView seatRecyclerView = findViewById(R.id.seatRecyclerView);
@@ -262,19 +263,20 @@ public class MainActivity extends AppCompatActivity{
     // Function to make Seats dummy
     public static List<Seat> dummySeat(int n) {
         List<Seat> seats = new ArrayList<>();
-        char row = 'A';  // Row bắt đầu từ A
-        int seatCount = 1;
+        int seatNumber = 1; // Bắt đầu từ 1
+        Random random = new Random(); // Tạo một đối tượng Random
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                String seatNum = row + String.valueOf(seatCount);  // Ví dụ: A1, A2, B1, B2, ...
-                Seat.Status status = Seat.Status.values()[(i + j) % 4];  // Chọn trạng thái vòng từ AVAILABLE đến BOOKED
+                // Sử dụng số ghế là số tự nhiên tăng dần
+                String seatNum = String.valueOf(seatNumber);
+
+                // Chọn trạng thái ngẫu nhiên từ Seat.Status
+                Seat.Status status = Seat.Status.values()[random.nextInt(Seat.Status.values().length)];
 
                 seats.add(new Seat(seatNum, status.name().toLowerCase()));
-                seatCount++;
+                seatNumber++; // Tăng số ghế
             }
-            row++;  // Di chuyển sang hàng tiếp theo
-            seatCount = 1;  // Reset số ghế cho hàng mới
         }
 
         return seats;

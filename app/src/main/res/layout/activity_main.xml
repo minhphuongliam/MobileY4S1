@@ -74,8 +74,8 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/seatRecyclerView"
-                    android:layout_width="339dp"
-                    android:layout_height="334dp"
+                    android:layout_width="345dp"
+                    android:layout_height="357dp"
                     android:contentDescription="Seats grid for movie booking"
                     android:padding="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/bookButton"

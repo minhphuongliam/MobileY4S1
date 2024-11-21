@@ -49,11 +49,11 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
             case AVAILABLE:
                 holder.seatImage.setImageResource(R.drawable.item_seat_available);
                 break;
-            case HOLDING:
-                holder.seatImage.setImageResource(R.drawable.item_seat_holding);
+            case TAPPING:
+                holder.seatImage.setImageResource(R.drawable.item_seat_tapping);
                 break;
             default:
-            case UNAVAILABLE:
+            case HOLDING:
             case BOOKED:
                 holder.seatImage.setImageResource(R.drawable.item_seat_unavailable);
         }

@@ -1,21 +1,29 @@
 package com.example.firebasetest.Model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Seat implements Serializable {
     private String seatNum;
     private String status;
+    private Date holdtime;
 
     public enum Status{
-        AVAILABLE,UNAVAILABLE,HOLDING,BOOKED
+        AVAILABLE, TAPPING, HOLDING, BOOKED
     }
 
     public Seat() {
     }
-
+    // xóa sau do lúc tạo dummy chưa để thời gian
     public Seat(String seatNum, String status) {
         this.seatNum = seatNum;
         this.status = status;
+    }
+
+    public Seat(String seatNum, String status, Date holdtime) {
+        this.seatNum = seatNum;
+        this.status = status;
+        this.holdtime = holdtime;
     }
 
     public String getSeatNum() {
@@ -32,7 +40,7 @@ public class Seat implements Serializable {
     public Status getStat() {
         switch (this.status){
             case "unavailable":
-                return Status.UNAVAILABLE;
+                return Status.TAPPING;
             case "holding":
                 return Status.HOLDING;
             case "booked":
@@ -44,7 +52,7 @@ public class Seat implements Serializable {
     public void setStatus(Status status) {
         String stat = "available";
         switch (status){
-            case UNAVAILABLE:
+            case TAPPING:
                 stat = "unavailable";
                 break;
             case HOLDING:
@@ -55,5 +63,17 @@ public class Seat implements Serializable {
                 break;
         }
         this.status = stat;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getHoldtime() {
+        return holdtime;
+    }
+
+    public void setHoldtime(Date holdtime) {
+        this.holdtime = holdtime;
     }
 }

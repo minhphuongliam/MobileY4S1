@@ -6,7 +6,6 @@ import java.util.Date;
 public class Seat implements Serializable {
     private String seatNum;
     private String status;
-    private Date holdtime;
 
     public enum Status{
         AVAILABLE, TAPPING, HOLDING, BOOKED
@@ -18,12 +17,6 @@ public class Seat implements Serializable {
     public Seat(String seatNum, String status) {
         this.seatNum = seatNum;
         this.status = status;
-    }
-
-    public Seat(String seatNum, String status, Date holdtime) {
-        this.seatNum = seatNum;
-        this.status = status;
-        this.holdtime = holdtime;
     }
 
     public String getSeatNum() {
@@ -67,13 +60,5 @@ public class Seat implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Date getHoldtime() {
-        return holdtime;
-    }
-
-    public void setHoldtime(Date holdtime) {
-        this.holdtime = holdtime;
     }
 }

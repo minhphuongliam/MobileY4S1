@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity{
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity{
     private FirebaseFirestore db;
     private List<Screening> screenings;
     private List<Seat> seats;
+
+    private String selectedDate;
+    private String selectedTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,23 +116,43 @@ public class MainActivity extends AppCompatActivity{
                 slotSet.get(date).add(time);
             }
         }
-        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet());
-        List<String> timeList = new ArrayList<>(); timeList.addAll(slotSet.get(dateList.get(0)));
+        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet()); // dèault load hết vào
+        List<String> timeList = new ArrayList<>();
+        //timeList.addAll(slotSet.get(dateList.get(0))); không để gì hoặc để hôm nay
 
         sortDateList(dateList);
-        sortTimeList(timeList);
+        //sortTimeList(timeList); // sort sau khi thêm vào
 
-        // nhồi date + time vào recycle view code test chuc nang
+    // nhồi date vào recycle view code test chuc nang
+        //Lấy recycle view
         RecyclerView dateRecyclerView = findViewById(R.id.dateRecycleView);
         RecyclerView timeRecyclerView = findViewById(R.id.timeRecycleView);
-
+        // đặt layout
         dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         timeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
+        //nhồi vào adapter
         ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
-        ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
-
         dateRecyclerView.setAdapter(dateAdapter);
+
+    // nhồi time vào recycle view code = event trong ItemDateAdapter test chuc nang
+
+        // đặt List<String> time bằng event
+        dateAdapter.setOnItemSelectedListener((date, position) -> {
+            // đẩy vào timeList để hiển thị
+            selectedDate = date;
+            timeList.addAll(slotSet.get(dateList.get(position)));
+            //sort
+            sortTimeList(timeList);
+
+            // lặp lại đoạn nhồi time
+            ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
+            timeRecyclerView.setAdapter(timeAdapter);
+        });
+
+
+        //nhồi vào adapter (default test chứuc năng)
+        ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
         timeRecyclerView.setAdapter(timeAdapter);
 
         //nhoi seat vao test chuc nang
@@ -139,6 +164,7 @@ public class MainActivity extends AppCompatActivity{
         seatRecyclerView.setAdapter(seatAdapter);
         seatRecyclerView.setLayoutManager(gridLayoutManager);
     }
+
 
     // sample dummy generator
     public List<Screening> dummymaker() throws ParseException {
@@ -157,12 +183,24 @@ public class MainActivity extends AppCompatActivity{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
 
+        Random random = new Random();
         int idCounter = 1; // For unique ID generation
+
         while (!calendar.getTime().after(endDate)) {
             String currentDate = onlyDateFormat.format(calendar.getTime());
 
             // Generate screenings for the current day
-            for (String time : times) {
+            List<String> availableTimes = new ArrayList<>(Arrays.asList(times));
+
+            // Randomly remove some times for the current day
+            int timesToRemove = random.nextInt(availableTimes.size()); // Number of times to remove
+            for (int i = 0; i < timesToRemove; i++) {
+                int removeIndex = random.nextInt(availableTimes.size());
+                availableTimes.remove(removeIndex);
+            }
+
+            // Add screenings for the remaining times
+            for (String time : availableTimes) {
                 String dateTime = currentDate + " " + time;
                 Date screeningDateTime = dateFormat.parse(dateTime);
 
@@ -182,14 +220,8 @@ public class MainActivity extends AppCompatActivity{
         }
 
         return screenings;
-        // Print the generated screenings
-//        for (Screening screening : screenings) {
-//            System.out.println("ID: " + screening.id +
-//                    ", MovieID: " + screening.movieID +
-//                    ", RoomID: " + screening.roomID +
-//                    ", Time: " + dateFormat.format(screening.time));
-//        }
     }
+
 
     // Function to sort the date list
     public static void sortDateList(List<String> dateList) {

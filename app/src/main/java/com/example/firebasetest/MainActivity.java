@@ -2,6 +2,7 @@ package com.example.firebasetest;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firebasetest.Adapter.ItemDateAdapter;
 import com.example.firebasetest.Adapter.ItemTimeAdapter;
 import com.example.firebasetest.Adapter.SeatAdapter;
+import com.example.firebasetest.Model.Booking;
 import com.example.firebasetest.Model.Screening;
 import com.example.firebasetest.Model.Seat;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,13 +34,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity{
 
     private FirebaseFirestore db;
-    private List<Screening> screenings;
+    private Map<String, Screening> screenings;
     private List<Seat> seats;
 
     private String selectedDate;
@@ -88,14 +91,20 @@ public class MainActivity extends AppCompatActivity{
                     }
                 });
 */
+        // tạo screenings Map
+        screenings = new HashMap<>();
+        // tạo lớp để lấy screening về
+        List<Screening> screeningList = new ArrayList<>();
 
-        //Dummy
-        try {
-            screenings = dummymaker();
+        //Dummy thế vào code lấy db thì bỉ bỏ đoạn seats thôi
+        {
+            try {
+            screeningList = dummymaker();
             seats = dummySeat(7);
         } catch (ParseException e) {
             Toast.makeText(MainActivity.this, "Kong load dc data!", Toast.LENGTH_LONG).show();
             throw new RuntimeException(e);
+        }
         }
 
         //
@@ -106,9 +115,13 @@ public class MainActivity extends AppCompatActivity{
         @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyDateSDF = new SimpleDateFormat("dd/MM/yyyy");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyTimeSDF = new SimpleDateFormat("HH:mm");
 
-        for(Screening screening : screenings){
+        for(Screening screening : screeningList){
             String date = onlyDateSDF.format(screening.getTime()).trim();
             String time = onlyTimeSDF.format(screening.getTime()).trim();
+
+            //lắp vào map để sau tìm kiếm dễ hơn
+            screenings.put(date+" "+time, screening);
+
             if(slotSet.containsKey(date)){
                 slotSet.get(date).add(time);
             }else{
@@ -116,7 +129,7 @@ public class MainActivity extends AppCompatActivity{
                 slotSet.get(date).add(time);
             }
         }
-        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet()); // dèault load hết vào
+        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet()); // default load hết vào
         List<String> timeList = new ArrayList<>();
         //timeList.addAll(slotSet.get(dateList.get(0))); không để gì hoặc để hôm nay
 
@@ -127,12 +140,18 @@ public class MainActivity extends AppCompatActivity{
         //Lấy recycle view
         RecyclerView dateRecyclerView = findViewById(R.id.dateRecycleView);
         RecyclerView timeRecyclerView = findViewById(R.id.timeRecycleView);
+        RecyclerView seatRecyclerView = findViewById(R.id.seatRecyclerView);
+
+
         // đặt layout
         dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         timeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        seatRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
+
+        // Tạo adapter
+        final ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
 
         //nhồi vào adapter
-        ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
         dateRecyclerView.setAdapter(dateAdapter);
 
     // nhồi time vào recycle view code = event trong ItemDateAdapter test chuc nang
@@ -146,24 +165,40 @@ public class MainActivity extends AppCompatActivity{
             //sort
             sortTimeList(timeList);
 
-            // lặp lại đoạn nhồi time
+            //nhồi time vào adapter dựa vào selected date
             ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
             timeAdapter.setOnItemSelectedListener((time, timePos) -> {
+            //set time
                 selectedTime = time;
-                // tìm seats trên fire base đẩy vào seat adapter;
                 Toast.makeText(MainActivity.this, "Date + Time: " + selectedDate + " " + selectedTime, Toast.LENGTH_LONG).show();
+
+            // lấy seats trên firebase từ movieRoom = screening đẩy vào seat adapter:
+
+                // lấy screeningId của screening đã chọn trên screenings (Map): Key = date+" "+time:
+                String screeingId = screenings.get(selectedDate + " " + selectedTime).getId();
+                // lấy từ db movieRoom và lấy seats(MAP)
+
+                SeatAdapter seatAdapter = new SeatAdapter(this, seats);
+                seatRecyclerView.setAdapter(seatAdapter);
             });
             timeRecyclerView.setAdapter(timeAdapter);
         });
 
-        //nhoi seat vao test chuc nang
-        RecyclerView seatRecyclerView = findViewById(R.id.seatRecyclerView);
-//        Toast.makeText(MainActivity.this, "Khong co seat" + seats.size(), Toast.LENGTH_LONG).show();
-        SeatAdapter seatAdapter = new SeatAdapter(this, seats);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 7);
 
-        seatRecyclerView.setAdapter(seatAdapter);
-        seatRecyclerView.setLayoutManager(gridLayoutManager);
+        //thêm event booking
+        Button bookButton = findViewById(R.id.bookButton);
+        bookButton.setOnClickListener(v -> {
+            //dummy :id, userid
+            Booking booking = new Booking(  "id0",
+                    "userid",
+                    screenings.get(selectedDate + " " + selectedTime),
+                    new ArrayList<>(),
+                    new Date());
+
+            for (Seat seat : ((SeatAdapter) Objects.requireNonNull(seatRecyclerView.getAdapter())).getSeatList()){
+
+            }
+        });
     }
 
 
@@ -256,6 +291,19 @@ public class MainActivity extends AppCompatActivity{
                     e.printStackTrace();
                     return 0;
                 }
+            }
+        });
+    }
+
+    // Function to sort the seats list
+    public static void sortSeatsByNumber(List<Seat> seats) {
+        Collections.sort(seats, new Comparator<Seat>() {
+            @Override
+            public int compare(Seat s1, Seat s2) {
+                // Chuyển seatNum từ String sang Integer để so sánh
+                int num1 = Integer.parseInt(s1.getSeatNum());
+                int num2 = Integer.parseInt(s2.getSeatNum());
+                return Integer.compare(num1, num2);
             }
         });
     }

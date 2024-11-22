@@ -17,13 +17,17 @@ import java.util.List;
 public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder> {
     private final List<Seat> seatList;
     private final Context context;
-    private List<Seat> selectedSeat;
     private OnItemSelectedListener listener;
 
     public SeatAdapter(Context context, List<Seat> seatList) {
         this.seatList = seatList;
         this.context = context;
     }
+
+    public List<Seat> getSeatList() {
+        return seatList;
+    }
+
     // Bước 1: Tạo Callback Interface
     public interface OnItemSelectedListener {
         void onItemSelected(String time, int position);

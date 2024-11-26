@@ -3,6 +3,7 @@ package com.example.firebasedemo.Mapper;
 import com.example.firebasedemo.DTO.CastDTO;
 import com.example.firebasedemo.DTO.CreditDTO;
 import com.example.firebasedemo.DTO.CrewDTO;
+import com.example.firebasedemo.DTO.GenreDTO;
 import com.example.firebasedemo.DTO.MovieDTO;
 import com.example.firebasedemo.DTO.VideoDTO;
 import com.example.firebasedemo.DTO.VideoResultDTO;
@@ -41,6 +42,15 @@ public class MovieMapper {
                 }
             }
             movie.setActors(topActors);
+        }
+
+        // Set the genres
+        if(movieDTO.getGenreDTOS() != null){
+            List<String> genres = new ArrayList<>();
+            for(GenreDTO genre : movieDTO.getGenreDTOS()){
+                genres.add(genre.getName());
+            }
+            movie.setGenres(genres);
         }
 
         // Find the first director

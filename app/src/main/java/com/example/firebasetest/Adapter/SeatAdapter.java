@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.firebasetest.Model.Seat;
 import com.example.firebasetest.R;
+import com.example.firebasetest.Model.Seat;
 
 import java.util.List;
 
@@ -57,6 +57,7 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
                 holder.seatImage.setImageResource(R.drawable.item_seat_tapping);
                 break;
             default:
+            case UNAVAILABLE:
             case HOLDING:
             case BOOKED:
                 holder.seatImage.setImageResource(R.drawable.item_seat_unavailable);
@@ -67,11 +68,11 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
             switch (seatList.get(holder.getAdapterPosition()).getStat()){
                 case AVAILABLE:
                     // cập nhật status thành holding
-                    seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.HOLDING);
+                    seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.TAPPING);
                     // Làm mới tất cả các item
                     notifyDataSetChanged();
                     break;
-                case HOLDING:
+                case TAPPING:
                     // cập nhật status thành available
                     seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.AVAILABLE);
                     // Làm mới tất cả các item

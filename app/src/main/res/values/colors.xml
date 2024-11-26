@@ -12,5 +12,5 @@
     <color name="date_unselected">#FFFFFF</color>
     <color name="seat_available">#989797</color>
     <color name="seat_unavailable">#28292b</color>
-    <color name="seat_holding">#d14706</color>
+    <color name="seat_tapping">#d14706</color>
 </resources>

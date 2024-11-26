@@ -1,14 +1,13 @@
 package com.example.firebasetest.Model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Seat implements Serializable {
     private String seatNum;
     private String status;
 
     public enum Status{
-        AVAILABLE, TAPPING, HOLDING, BOOKED
+        AVAILABLE, TAPPING, UNAVAILABLE, BOOKED, HOLDING
     }
 
     public Seat() {
@@ -33,11 +32,13 @@ public class Seat implements Serializable {
     public Status getStat() {
         switch (this.status){
             case "unavailable":
+                return Status.UNAVAILABLE;
+            case "tapping":
                 return Status.TAPPING;
-            case "holding":
-                return Status.HOLDING;
             case "booked":
                 return Status.BOOKED;
+            case "holding":
+                return Status.HOLDING;
         }
         return Status.AVAILABLE;
     }
@@ -46,13 +47,16 @@ public class Seat implements Serializable {
         String stat = "available";
         switch (status){
             case TAPPING:
-                stat = "unavailable";
+                stat = "tapping";
                 break;
-            case HOLDING:
-                stat = "holding";
+            case UNAVAILABLE:
+                stat = "unavailable";
                 break;
             case BOOKED:
                 stat = "booked";
+                break;
+            case HOLDING:
+                stat = "holding";
                 break;
         }
         this.status = stat;

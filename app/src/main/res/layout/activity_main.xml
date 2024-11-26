@@ -104,7 +104,7 @@
                     android:id="@+id/totalSeats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total seats:"
+                    android:text="Total seat:"
                     android:textSize="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/bookButton"

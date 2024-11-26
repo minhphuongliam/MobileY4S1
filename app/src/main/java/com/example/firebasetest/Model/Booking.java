@@ -9,17 +9,20 @@ public class Booking implements Serializable {
     private String userID;
     private Screening screening;
     private List<Seat> seatList;
-    private Date holdingTime;
+    private Date bookTime;
+    private Float price;
+    private List<Voucher> vouchers;
+    private Boolean payed;
 
     public Booking() {
     }
 
-    public Booking(String id, String userID, Screening screening, List<Seat> seatList, Date holdingTime) {
+    public Booking(String id, String userID, Screening screening, List<Seat> seatList, Date bookTime) {
         this.id = id;
         this.userID = userID;
         this.screening = screening;
         this.seatList = seatList;
-        this.holdingTime = holdingTime;
+        this.bookTime = bookTime;
     }
 
     public String getId() {
@@ -54,11 +57,27 @@ public class Booking implements Serializable {
         this.seatList = seatList;
     }
 
-    public Date getHoldingTime() {
-        return holdingTime;
+    public Date getBookTime() {
+        return bookTime;
     }
 
-    public void setHoldingTime(Date holdingTime) {
-        this.holdingTime = holdingTime;
+    public void setBookTime(Date bookTime) {
+        this.bookTime = bookTime;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
+    public Boolean getPayed() {
+        return payed;
+    }
+
+    public void setPayed(Boolean payed) {
+        this.payed = payed;
     }
 }

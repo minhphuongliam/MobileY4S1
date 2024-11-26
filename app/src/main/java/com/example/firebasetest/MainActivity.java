@@ -1,5 +1,7 @@
 package com.example.firebasetest;
 
+import static com.example.firebasetest.DummyPusher.dummySeat;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
@@ -20,13 +22,14 @@ import com.example.firebasetest.Adapter.SeatAdapter;
 import com.example.firebasetest.Model.Booking;
 import com.example.firebasetest.Model.Screening;
 import com.example.firebasetest.Model.Seat;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity{
@@ -44,8 +46,7 @@ public class MainActivity extends AppCompatActivity{
     private Map<String, Screening> screenings;
     private List<Seat> seats;
 
-    private String selectedDate;
-    private String selectedTime;
+    private String selectedDateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,205 +58,113 @@ public class MainActivity extends AppCompatActivity{
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-//Bôi để test chức năng cơ bản bằng dummy object
-/*
-        //lấy movie id từ cái intent
-        String movieid = "123";
-        db = FirebaseFirestore.getInstance();
 
-        db.collection("sample")
-                .whereEqualTo("movieID",movieid)
+        // Lấy movie, user id từ intent
+        String movieid = "1263992";
+        String userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
+
+
+        // Lấy data từ Firestore
+        db = FirebaseFirestore.getInstance();
+        db.collection("screenings")
+                .whereEqualTo("movieID", movieid)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-                        // nhồi data vào screenings
                         QuerySnapshot querySnapshots =task.getResult();
                         if(querySnapshots != null){
+
+                            // Tạo danh sách để lưu screenings
+                            Map<String, Screening> screenings = new HashMap<>();    //danh sách screening qua map để dễ tìm
+                            Map<String, Set<String>> slotSet = new HashMap<>();     //danh sách time slot chiếu
+
+                            // Format ngày và giờ
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyDateSDF = new SimpleDateFormat("dd/MM/yyyy");
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyTimeSDF = new SimpleDateFormat("HH:mm");
+
                             for(QueryDocumentSnapshot document : querySnapshots){
                                 String screendingID = document.getId();
                                 String movieID      = (String) document.get("movieID");
                                 String roomID       = (String) document.get("roomID");
                                 Timestamp dbTime    = document.getTimestamp("time");
 
-                                // convert time to DateTime:
-                                Date time = new Date();
-                                if(dbTime != null){
-                                    time = dbTime.toDate();
-                                }
+                                // Chuyển timestamp thành Date
+                                Date time = dbTime != null ? dbTime.toDate() : new Date();
 
-                                screenings.add(new Screening(screendingID, movieID, roomID, time));
+                                String date = onlyDateSDF.format(time).trim();
+                                String timeStr = onlyTimeSDF.format(time).trim();
+
+                                screenings.put(date + " " + timeStr, new Screening(screendingID, movieID, roomID, time));
+                                //Put time into sime slot map
+                                if (!slotSet.containsKey(date)) {
+                                    slotSet.put(date, new HashSet<>());
+                                }
+                                Objects.requireNonNull(slotSet.get(date)).add(timeStr);
                             }
+                            // Sau khi hoàn tất việc lấy dữ liệu từ Firebase, xử lý phần còn lại
+                            runOnUiThread(() -> initializeUI(slotSet, screenings));
                         }
                     }else{
                         Toast.makeText(this, "Fetch error:" + task.getException(), Toast.LENGTH_SHORT).show();
                     }
                 });
-*/
-        // tạo screenings Map
-        screenings = new HashMap<>();
-        // tạo lớp để lấy screening về
-        List<Screening> screeningList = new ArrayList<>();
+    }
 
-        //Dummy thế vào code lấy db thì bỉ bỏ đoạn seats thôi
-        {
-            try {
-            screeningList = dummymaker();
-            seats = dummySeat(7);
-        } catch (ParseException e) {
-            Toast.makeText(MainActivity.this, "Kong load dc data!", Toast.LENGTH_LONG).show();
-            throw new RuntimeException(e);
-        }
-        }
 
-        //
+    //Function to put itemdate & time in recycleview
+    private void initializeUI(Map<String, Set<String>> slotSet, Map<String, Screening> screenings) {
+        // Danh sách ngày và giờ
+        List<String> dateList = new ArrayList<>(slotSet.keySet());
+        sortDateList(dateList); // Hàm sắp xếp theo ngày (cần viết riêng)
 
-        //lọc các mốc thời gian của screening ra
-        Map<String, Set<String>> slotSet = new HashMap<>();
-
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyDateSDF = new SimpleDateFormat("dd/MM/yyyy");
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat onlyTimeSDF = new SimpleDateFormat("HH:mm");
-
-        for(Screening screening : screeningList){
-            String date = onlyDateSDF.format(screening.getTime()).trim();
-            String time = onlyTimeSDF.format(screening.getTime()).trim();
-
-            //lắp vào map để sau tìm kiếm dễ hơn
-            screenings.put(date+" "+time, screening);
-
-            if(slotSet.containsKey(date)){
-                slotSet.get(date).add(time);
-            }else{
-                slotSet.put(date,new HashSet<>());
-                slotSet.get(date).add(time);
-            }
-        }
-        List<String> dateList = new ArrayList<>(); dateList.addAll(slotSet.keySet()); // default load hết vào
         List<String> timeList = new ArrayList<>();
-        //timeList.addAll(slotSet.get(dateList.get(0))); không để gì hoặc để hôm nay
 
-        sortDateList(dateList);
-        //sortTimeList(timeList); // sort sau khi thêm vào
 
-    // nhồi date vào recycle view code test chuc nang
-        //Lấy recycle view
+        // Khởi tạo RecyclerViews
         RecyclerView dateRecyclerView = findViewById(R.id.dateRecycleView);
         RecyclerView timeRecyclerView = findViewById(R.id.timeRecycleView);
         RecyclerView seatRecyclerView = findViewById(R.id.seatRecyclerView);
 
-
-        // đặt layout
         dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         timeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         seatRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
 
-        // Tạo adapter
-        final ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
-
-        //nhồi vào adapter
+        // Adapter cho danh sách ngày
+        ItemDateAdapter dateAdapter = new ItemDateAdapter(this, dateList);
         dateRecyclerView.setAdapter(dateAdapter);
 
-    // nhồi time vào recycle view code = event trong ItemDateAdapter test chuc nang
-
-        // đặt List<String> time bằng event
+        // Xử lý chọn ngày
         dateAdapter.setOnItemSelectedListener((date, datePos) -> {
-            selectedDate = date;
-            // đẩy vào timeList để hiển thị
+            seatRecyclerView.setAdapter(null);
             timeList.clear();
-            timeList.addAll(slotSet.get(dateList.get(datePos)));
-            //sort
-            sortTimeList(timeList);
+            timeList.addAll(slotSet.get(date));
+            sortTimeList(timeList); // Hàm sắp xếp theo giờ (cần viết riêng)
 
-            //nhồi time vào adapter dựa vào selected date
+            // Adapter cho danh sách giờ
             ItemTimeAdapter timeAdapter = new ItemTimeAdapter(this, timeList);
+            timeRecyclerView.setAdapter(timeAdapter);
+
+            // Xử lý chọn giờ
             timeAdapter.setOnItemSelectedListener((time, timePos) -> {
-            //set time
-                selectedTime = time;
-                Toast.makeText(MainActivity.this, "Date + Time: " + selectedDate + " " + selectedTime, Toast.LENGTH_LONG).show();
+                selectedDateTime = date + " " + time;
+                Screening selectedScreening = screenings.get(selectedDateTime);
 
-            // lấy seats trên firebase từ movieRoom = screening đẩy vào seat adapter:
-
-                // lấy screeningId của screening đã chọn trên screenings (Map): Key = date+" "+time:
-                String screeingId = screenings.get(selectedDate + " " + selectedTime).getId();
-                // lấy từ db movieRoom và lấy seats(MAP)
-
+                // Ví dụ: xử lý ghế dựa trên screening được chọn
+                List<Seat> seats = dummySeat(7); // Hàm tạo danh sách ghế giả lập
                 SeatAdapter seatAdapter = new SeatAdapter(this, seats);
                 seatRecyclerView.setAdapter(seatAdapter);
             });
-            timeRecyclerView.setAdapter(timeAdapter);
         });
 
-
-        //thêm event booking
+        // Xử lý nút booking (ví dụ)
         Button bookButton = findViewById(R.id.bookButton);
         bookButton.setOnClickListener(v -> {
-            //dummy :id, userid
-            Booking booking = new Booking(  "id0",
-                    "userid",
-                    screenings.get(selectedDate + " " + selectedTime),
-                    new ArrayList<>(),
-                    new Date());
+//            Screening screening = screenings.get(selectedDateTime);
 
-            for (Seat seat : ((SeatAdapter) Objects.requireNonNull(seatRecyclerView.getAdapter())).getSeatList()){
-
-            }
+            // Tạo booking mới
+//            Booking booking = new Booking("id0", "userid", screening, new ArrayList<>(), new Date());
+            Toast.makeText(this, "Booking created for " + selectedDateTime, Toast.LENGTH_SHORT).show();
         });
-    }
-
-
-    // sample dummy generator
-    public List<Screening> dummymaker() throws ParseException {
-        List<Screening> screenings = new ArrayList<>();
-
-        // Define the date range
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        SimpleDateFormat onlyDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date startDate = onlyDateFormat.parse("01/12/2024");
-        Date endDate = onlyDateFormat.parse("20/12/2024");
-
-        // Define times for each day
-        String[] times = {"08:30", "10:00", "13:00", "15:00", "17:30", "18:00", "20:00", "21:00"};
-
-        // Generate dates between start and end
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(startDate);
-
-        Random random = new Random();
-        int idCounter = 1; // For unique ID generation
-
-        while (!calendar.getTime().after(endDate)) {
-            String currentDate = onlyDateFormat.format(calendar.getTime());
-
-            // Generate screenings for the current day
-            List<String> availableTimes = new ArrayList<>(Arrays.asList(times));
-
-            // Randomly remove some times for the current day
-            int timesToRemove = random.nextInt(availableTimes.size()); // Number of times to remove
-            for (int i = 0; i < timesToRemove; i++) {
-                int removeIndex = random.nextInt(availableTimes.size());
-                availableTimes.remove(removeIndex);
-            }
-
-            // Add screenings for the remaining times
-            for (String time : availableTimes) {
-                String dateTime = currentDate + " " + time;
-                Date screeningDateTime = dateFormat.parse(dateTime);
-
-                // Create a Screening object
-                Screening screening = new Screening(
-                        "S" + idCounter++, // Unique ID
-                        "Movie" + idCounter, // Movie ID
-                        "Room" + idCounter, // Room ID
-                        screeningDateTime
-                );
-
-                screenings.add(screening);
-            }
-
-            // Move to the next day
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
-
-        return screenings;
     }
 
 
@@ -306,27 +215,5 @@ public class MainActivity extends AppCompatActivity{
                 return Integer.compare(num1, num2);
             }
         });
-    }
-
-    // Function to make Seats dummy
-    public static List<Seat> dummySeat(int n) {
-        List<Seat> seats = new ArrayList<>();
-        int seatNumber = 1; // Bắt đầu từ 1
-        Random random = new Random(); // Tạo một đối tượng Random
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                // Sử dụng số ghế là số tự nhiên tăng dần
-                String seatNum = String.valueOf(seatNumber);
-
-                // Chọn trạng thái ngẫu nhiên từ Seat.Status
-                Seat.Status status = Seat.Status.values()[random.nextInt(Seat.Status.values().length)];
-
-                seats.add(new Seat(seatNum, status.name().toLowerCase()));
-                seatNumber++; // Tăng số ghế
-            }
-        }
-
-        return seats;
     }
 }

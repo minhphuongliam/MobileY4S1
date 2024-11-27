@@ -22,8 +22,8 @@ public class TrailerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trailer);
-        // String videoId = getIntent().getStringExtra("VIDEO_ID");
-        String videoId = "QJ8E9R70csY";
+        String videoId = getIntent().getStringExtra("VIDEO_ID");
+        //String videoId = "QJ8E9R70csY";
 
         youTubePlayerView = findViewById(R.id.youtube_player_view);
         youTubePlayerView.setEnableAutomaticInitialization(false);

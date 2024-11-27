@@ -94,4 +94,5 @@ dependencies {
     implementation ("androidx.security:security-crypto:1.1.0-alpha04")
     // firestore
     implementation ("com.google.firebase:firebase-firestore:24.7.0")
+
 }

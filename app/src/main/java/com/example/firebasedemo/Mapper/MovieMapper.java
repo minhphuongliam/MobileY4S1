@@ -32,6 +32,7 @@ public class MovieMapper {
         movie.setVoteAvarage(movieDTO.getVoteAvarage());
         movie.setMovieOverview(movieDTO.getMovieOverview());
 
+
         // Filter first 5 actors
         if (creditDTO != null && creditDTO.getCastDTOS() != null) {
             List<String> topActors = new ArrayList<>();

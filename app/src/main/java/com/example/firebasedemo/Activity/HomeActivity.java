@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
             "https://i.ibb.co/3zCqh5x/advertisement2.jpg",
             "https://i.ibb.co/ys7Ykpc/advertisement3.jpg"
     );
-    private RecyclerView recyclerViewTopMovies, recyclerViewUpcoming;
+    private RecyclerView recyclerViewNowshowing, recyclerViewUpcoming;
     private TextView textEmail;
     private ViewPager2 viewPager2;
 
@@ -57,7 +59,26 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        recyclerViewTopMovies = findViewById(R.id.recyclerViewTopMovies);
+        // Initialize ProgressBars
+        ProgressBar progressBarNowshowing = findViewById(R.id.progressBarNowshowing);
+        ProgressBar progressBarSlider = findViewById(R.id.progressBarSlider);
+        ProgressBar progressBarupcomming = findViewById(R.id.progressBarupcomming);
+
+        // Show ProgressBars initially
+        progressBarNowshowing.setVisibility(View.VISIBLE);
+        progressBarSlider.setVisibility(View.VISIBLE);
+        progressBarupcomming.setVisibility(View.VISIBLE);
+
+        // Hide ProgressBars after 3 seconds (3000 milliseconds)
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressBarNowshowing.setVisibility(View.GONE);
+                progressBarSlider.setVisibility(View.GONE);
+                progressBarupcomming.setVisibility(View.GONE);
+            }
+        }, 3000);
+        recyclerViewNowshowing = findViewById(R.id.recyclerViewNowshowing);
         recyclerViewUpcoming = findViewById(R.id.recyclerViewUpcomming);
         viewPager2 = findViewById(R.id.viewPager2);
 
@@ -72,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
 
         setupAdViewPager();
 
-        recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewNowshowing.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewUpcoming.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         fetchMovieDetails(nowShowingMovies, "Now Showing");
@@ -195,13 +216,38 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // Update RecyclerView based on category
+    // Update RecyclerView based on category
     private void updateRecyclerView(String category, ArrayList<Movie> movieList) {
+        // Tạo listener xử lý sự kiện click
+        MovieAdapter.OnMovieClickListener listener = (movie, isNowShowing) -> {
+            if (isNowShowing) {
+                // Xử lý sự kiện khi phim thuộc danh mục "Now Showing"
+                // Log thông tin phim được chọn
+                Log.v("Tag", "Selected movie: " + movie +" isNowShowing: " + isNowShowing);
+
+                //Toast.makeText(HomeActivity.this, "Now Showing: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+            } else {
+                // Xử lý sự kiện khi phim thuộc danh mục "Up Coming"
+                Log.v("Tag", "Selected movie: " + movie +" isNowShowing: " + isNowShowing);
+                //Toast.makeText(HomeActivity.this, "Up Coming: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+            // Gọi sang movieDetail
+
+            Intent intent = new Intent(HomeActivity.this, MovieDetailActivity.class);
+            intent.putExtra("movieId", movie.getMovieId()); // Truyền đối tượng movieId
+            Log.v("Tag", "Movie ID: " + movie.getMovieId());
+            intent.putExtra("isNowShowing", isNowShowing); // Truyền thông tin danh mục
+            startActivity(intent);
+        };
+
+        // Truyền listener vào adapter
         if (category.equals("Now Showing")) {
-            recyclerViewTopMovies.setAdapter(new MovieAdapter(this, movieList));
+            recyclerViewNowshowing.setAdapter(new MovieAdapter(this, movieList, true, listener));
         } else {
-            recyclerViewUpcoming.setAdapter(new MovieAdapter(this, movieList));
+            recyclerViewUpcoming.setAdapter(new MovieAdapter(this, movieList, false, listener));
         }
     }
+
 
     // Fetch movie IDs based on category
     private int[] getMovieIds(String category) {

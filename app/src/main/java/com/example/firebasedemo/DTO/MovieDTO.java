@@ -4,8 +4,11 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.example.firebasedemo.Model.Genre;
+import com.example.firebasedemo.Model.Movie;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDTO implements Parcelable {
@@ -42,6 +45,7 @@ public class MovieDTO implements Parcelable {
     @SerializedName("overview")
     private String movieOverview;
 
+
     public MovieDTO(String title, Integer movieId, boolean adult, String originalTitle, String posterPath, String backdropPath, Integer runtime, String releaseDate, List<GenreDTO> genreDTOS, Float voteAvarage, String movieOverview) {
         this.title = title;
         this.movieId = movieId;
@@ -55,7 +59,31 @@ public class MovieDTO implements Parcelable {
         this.voteAvarage = voteAvarage;
         this.movieOverview = movieOverview;
     }
-
+    /* Phương thức chuyển đổi từ đối tượng Movie sang MovieDTO.
+            */
+    public static MovieDTO fromMovie(Movie movie) {
+        // Chuyển đổi List<String> (danh sách tên thể loại) sang List<GenreDTO>
+        List<GenreDTO> genreDTOList = new ArrayList<>();
+        for (String genreName : movie.getGenres()) {
+            GenreDTO genreDTO = new GenreDTO();
+            genreDTO.setName(genreName);  // Gán tên thể loại từ List<String> vào GenreDTO
+            genreDTOList.add(genreDTO);
+        }
+        // Trả về đối tượng MovieDTO với List<GenreDTO>
+        return new MovieDTO(
+                movie.getTitle(),
+                movie.getMovieId(),
+                movie.isAdult(),
+                movie.getOriginalTitle(),
+                movie.getPosterPath(),
+                movie.getBackdropPath(),
+                movie.getRuntime(),
+                movie.getReleaseDate(),
+                genreDTOList,  // Truyền List<GenreDTO> đã chuyển đổi
+                movie.getVoteAvarage(),
+                movie.getMovieOverview()
+        );
+    }
 
     protected MovieDTO(Parcel in) {
         title = in.readString();

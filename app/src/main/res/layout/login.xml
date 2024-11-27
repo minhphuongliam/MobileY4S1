@@ -87,6 +87,7 @@
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="14sp"
+        android:textStyle="bold"
         android:background="@android:color/transparent"/>
     <ImageView
         android:id="@+id/filmRollIcon"

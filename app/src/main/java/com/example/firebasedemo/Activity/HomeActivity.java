@@ -102,7 +102,6 @@ public class HomeActivity extends AppCompatActivity {
     // Fetch movie details from TMDB API
     private void fetchMovieDetails(ArrayList<Movie> movieList, String category) {
         MovieApi movieApi = Service.getMovieApi();
-
         for (int movieId : getMovieIds(category)) {
             Call<MovieDTO> movieCall = movieApi.getMovie(movieId, TmdbApiConstants.API_KEY);
             Call<CreditDTO> creditCall = movieApi.getCredit(movieId, TmdbApiConstants.API_KEY);

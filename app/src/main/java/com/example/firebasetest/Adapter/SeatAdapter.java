@@ -49,7 +49,7 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     public void onBindViewHolder(@NonNull SeatViewHolder holder, int position) {
         Seat seat = seatList.get(position);
 
-        switch (seat.getStat()){
+        switch (seat.getStatus()){
             case AVAILABLE:
                 holder.seatImage.setImageResource(R.drawable.item_seat_available);
                 break;
@@ -65,7 +65,7 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
         // Xử lý sự kiện click
         holder.itemView.setOnClickListener(v ->{
             // nếu ghế trống
-            switch (seatList.get(holder.getAdapterPosition()).getStat()){
+            switch (seatList.get(holder.getAdapterPosition()).getStatus()){
                 case AVAILABLE:
                     // cập nhật status thành holding
                     seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.TAPPING);

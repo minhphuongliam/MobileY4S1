@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firebasetest.Adapter.ItemDateAdapter;
 import com.example.firebasetest.Adapter.ItemTimeAdapter;
 import com.example.firebasetest.Adapter.SeatAdapter;
-import com.example.firebasetest.Model.Booking;
+import com.example.firebasetest.Model.MovieRoom;
 import com.example.firebasetest.Model.Screening;
 import com.example.firebasetest.Model.Seat;
 import com.google.firebase.Timestamp;
@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -149,10 +148,38 @@ public class MainActivity extends AppCompatActivity{
                 selectedDateTime = date + " " + time;
                 Screening selectedScreening = screenings.get(selectedDateTime);
 
-                // Ví dụ: xử lý ghế dựa trên screening được chọn
-                List<Seat> seats = dummySeat(7); // Hàm tạo danh sách ghế giả lập
-                SeatAdapter seatAdapter = new SeatAdapter(this, seats);
-                seatRecyclerView.setAdapter(seatAdapter);
+                //xử lý ghế dựa trên screening được chọn
+                db.collection("movieRoom")
+                        .whereEqualTo("screeningID",selectedScreening.getId())
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if(task.isSuccessful()) {
+                                QuerySnapshot querySnapshots = task.getResult();
+                                List<Seat> seats = new ArrayList<>();
+
+                                if (querySnapshots != null) {
+                                    // Duyệt qua các document trả về
+                                    for (QueryDocumentSnapshot document : querySnapshots) {
+                                        // Lấy dữ liệu "seats" dưới dạng Map
+                                        Map<String, String> seatMap = (Map<String, String>) document.get("seats");
+
+                                        if (seatMap != null) {
+                                            // Chuyển từng entry trong Map thành đối tượng Seat và thêm vào danh sách
+                                            for (Map.Entry<String, String> entry : seatMap.entrySet()) {
+                                                String seatNum = entry.getKey();
+                                                String status = entry.getValue();
+                                                seats.add(new Seat(seatNum, status));
+                                            }
+                                        }
+                                    }
+                                    // Cập nhật adapter
+                                    SeatAdapter seatAdapter = new SeatAdapter(this, seats);
+                                    seatRecyclerView.setAdapter(seatAdapter);
+                                }
+                            }else{
+                                Toast.makeText(this, "Fetch error:" + task.getException(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
             });
         });
 

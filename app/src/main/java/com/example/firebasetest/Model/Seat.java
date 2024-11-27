@@ -4,18 +4,37 @@ import java.io.Serializable;
 
 public class Seat implements Serializable {
     private String seatNum;
-    private String status;
+    private Status status;
 
     public enum Status{
-        AVAILABLE, TAPPING, UNAVAILABLE, BOOKED, HOLDING
+        AVAILABLE, TAPPING, UNAVAILABLE, BOOKED, HOLDING;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static Status fromString(String status) {
+            try {
+                return Status.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return UNAVAILABLE; // Giá trị mặc định
+            }
+        }
     }
 
     public Seat() {
+        this.status = Status.UNAVAILABLE; // Trạng thái mặc định
     }
-    // xóa sau do lúc tạo dummy chưa để thời gian
-    public Seat(String seatNum, String status) {
+
+    public Seat(String seatNum, Status status) {
         this.seatNum = seatNum;
         this.status = status;
+    }
+
+    public Seat(String seatNum, String status) {
+        this.seatNum = seatNum;
+        this.status = Status.fromString(status);
     }
 
     public String getSeatNum() {
@@ -26,43 +45,10 @@ public class Seat implements Serializable {
         this.seatNum = seatNum;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
-    public Status getStat() {
-        switch (this.status){
-            case "unavailable":
-                return Status.UNAVAILABLE;
-            case "tapping":
-                return Status.TAPPING;
-            case "booked":
-                return Status.BOOKED;
-            case "holding":
-                return Status.HOLDING;
-        }
-        return Status.AVAILABLE;
-    }
-
     public void setStatus(Status status) {
-        String stat = "available";
-        switch (status){
-            case TAPPING:
-                stat = "tapping";
-                break;
-            case UNAVAILABLE:
-                stat = "unavailable";
-                break;
-            case BOOKED:
-                stat = "booked";
-                break;
-            case HOLDING:
-                stat = "holding";
-                break;
-        }
-        this.status = stat;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
     }
 }

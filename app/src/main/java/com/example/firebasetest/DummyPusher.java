@@ -100,10 +100,21 @@ public class DummyPusher {
                 // Sử dụng số ghế là số tự nhiên tăng dần
                 String seatNum = String.valueOf(seatNumber);
 
-                // Chọn trạng thái ngẫu nhiên từ Seat.Status
-                Seat.Status status = Seat.Status.values()[random.nextInt(Seat.Status.values().length)];
 
-                seats.add(new Seat(seatNum, status.name().toLowerCase()));
+                /// Danh sách các trạng thái hợp lệ
+                Seat.Status[] validStatuses = {
+                        Seat.Status.UNAVAILABLE,
+                        Seat.Status.AVAILABLE,
+                        Seat.Status.BOOKED
+                };
+
+                // Tạo số ngẫu nhiên trong khoảng 0 đến (validStatuses.length - 1)
+                int randomIndex = random.nextInt(validStatuses.length);
+
+                // Lấy trạng thái ngẫu nhiên
+                Seat.Status randomStatus = validStatuses[randomIndex];
+
+                seats.add(new Seat(seatNum, randomStatus));
                 seatNumber++; // Tăng số ghế
             }
         }

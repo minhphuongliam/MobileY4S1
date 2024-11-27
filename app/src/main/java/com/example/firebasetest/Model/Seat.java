@@ -1,10 +1,44 @@
 package com.example.firebasetest.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
-public class Seat implements Serializable {
+public class Seat implements Serializable, Parcelable {
     private String seatNum;
     private Status status;
+
+    protected Seat(Parcel in) {
+        seatNum = in.readString();
+        String statusString = in.readString();
+        status = Status.fromString(statusString);
+    }
+
+    public static final Creator<Seat> CREATOR = new Creator<Seat>() {
+        @Override
+        public Seat createFromParcel(Parcel in) {
+            return new Seat(in);
+        }
+
+        @Override
+        public Seat[] newArray(int size) {
+            return new Seat[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(seatNum);
+        parcel.writeString(status != null ? status.toString() : null);
+    }
 
     public enum Status{
         AVAILABLE, TAPPING, UNAVAILABLE, BOOKED, HOLDING;

@@ -1,4 +1,4 @@
-package com.example.firebasetest.DTO;
+package com.example.firebasetest;
 
 import java.util.Date;
 

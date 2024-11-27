@@ -1,6 +1,6 @@
 package com.example.firebasetest.Mapper;
 
-import com.example.firebasetest.DTO.ScreeningDTO;
+import com.example.firebasetest.ScreeningDTO;
 import com.example.firebasetest.Model.Screening;
 
 public class ScreeningMap {

@@ -1,10 +1,11 @@
 package com.example.firebasetest;
 
-import static com.example.firebasetest.DummyPusher.dummySeat;
-
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.firebasetest.Adapter.ItemDateAdapter;
 import com.example.firebasetest.Adapter.ItemTimeAdapter;
 import com.example.firebasetest.Adapter.SeatAdapter;
-import com.example.firebasetest.Model.MovieRoom;
+import com.example.firebasetest.Model.Booking;
 import com.example.firebasetest.Model.Screening;
 import com.example.firebasetest.Model.Seat;
 import com.google.firebase.Timestamp;
@@ -39,28 +40,31 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity{
+public class BookingActivity extends AppCompatActivity{
 
     private FirebaseFirestore db;
     private Map<String, Screening> screenings;
     private List<Seat> seats;
 
+    private String userid;
+    private String movieid;
+    private Float totalCost = 0.0f;
+    private int totalSeat = 0;
     private String selectedDateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_booking);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         // Lấy movie, user id từ intent
-        String movieid = "1263992";
-        String userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
+        movieid = "1263992";
+        userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
 
 
         // Lấy data từ Firestore
@@ -174,6 +178,21 @@ public class MainActivity extends AppCompatActivity{
                                     }
                                     // Cập nhật adapter
                                     SeatAdapter seatAdapter = new SeatAdapter(this, seats);
+                                    seatAdapter.setOnItemSelectedListener(new SeatAdapter.OnItemSeatSelectedListener() {
+                                        // cập nhật giá.
+                                        @Override
+                                        public void onItemSelected(boolean stats) {
+                                            if (stats){
+                                                totalCost += 70000.0f;
+                                                totalSeat ++;
+                                            }else{
+                                                totalCost -= 70000.0f;
+                                                totalSeat --;
+                                            }
+
+                                            moneyUPD();
+                                        }
+                                    });
                                     seatRecyclerView.setAdapter(seatAdapter);
                                 }
                             }else{
@@ -182,18 +201,48 @@ public class MainActivity extends AppCompatActivity{
                         });
             });
         });
+        moneyUPD();
 
         // Xử lý nút booking (ví dụ)
         Button bookButton = findViewById(R.id.bookButton);
         bookButton.setOnClickListener(v -> {
-//            Screening screening = screenings.get(selectedDateTime);
+            Screening selectingScreening = screenings.get(selectedDateTime);
 
             // Tạo booking mới
-//            Booking booking = new Booking("id0", "userid", screening, new ArrayList<>(), new Date());
-            Toast.makeText(this, "Booking created for " + selectedDateTime, Toast.LENGTH_SHORT).show();
+            List<Seat> holdingSeat = new ArrayList<>();
+            for (Seat s : ((SeatAdapter) Objects.requireNonNull(seatRecyclerView.getAdapter())).getSeatList() ) {
+                if(s.getStatus() == Seat.Status.TAPPING){
+                    holdingSeat.add(s);
+                }
+            }
+            Booking booking = new Booking(
+                    "",
+                    userid,
+                    selectingScreening,
+                    holdingSeat,
+                    new Date() /*date lúc sau tuấn lại đặt lại chăng?*/,
+                    totalCost,
+                    new ArrayList<>(),
+                    false
+            );
+            //Nhay sang trang sau
+            Intent intent = new Intent(this, NextoActivity.class);
+            intent.putExtra("booking_data", (Parcelable) booking);
+            startActivity(intent);
         });
     }
 
+    // function cập nhật tiền, ghế
+    public void moneyUPD(){
+        TextView totalSeattxt = findViewById(R.id.totalSeats);
+        TextView totalCosttxt = findViewById(R.id.totalCost);
+
+        String seatStr = "Total seats: " + totalSeat,
+                cost = "Total cost: " + totalCost + "vnd";
+
+        totalSeattxt.setText(seatStr);
+        totalCosttxt.setText(cost);
+    }
 
     // Function to sort the date list
     public static void sortDateList(List<String> dateList) {
@@ -243,4 +292,5 @@ public class MainActivity extends AppCompatActivity{
             }
         });
     }
+
 }

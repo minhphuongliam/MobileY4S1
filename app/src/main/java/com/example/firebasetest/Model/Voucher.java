@@ -1,9 +1,14 @@
 package com.example.firebasetest.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public class Voucher implements Serializable {
+public class Voucher implements Serializable, Parcelable {
     private String id;        // Mã định danh duy nhất cho voucher
     private String code;      // Mã voucher mà người dùng sẽ nhập
     private String description;      // Mô tả ngắn gọn về voucher
@@ -28,6 +33,32 @@ public class Voucher implements Serializable {
         this.endDate = endDate;
         this.isActive = isActive;
     }
+
+    protected Voucher(Parcel in) {
+        id = in.readString();
+        code = in.readString();
+        description = in.readString();
+        type = in.readString();
+        value = in.readDouble();
+        minimumOrderValue = in.readDouble();
+        long startDateMillis = in.readLong();
+        startDate = startDateMillis == -1 ? null : new Date(startDateMillis);
+        long endDateMillis = in.readLong();
+        endDate = endDateMillis == -1 ? null : new Date(endDateMillis);
+        isActive = in.readByte() != 0;
+    }
+
+    public static final Creator<Voucher> CREATOR = new Creator<Voucher>() {
+        @Override
+        public Voucher createFromParcel(Parcel in) {
+            return new Voucher(in);
+        }
+
+        @Override
+        public Voucher[] newArray(int size) {
+            return new Voucher[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -99,5 +130,23 @@ public class Voucher implements Serializable {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(code);
+        parcel.writeString(description);
+        parcel.writeString(type);
+        parcel.writeDouble(value);
+        parcel.writeDouble(minimumOrderValue);
+        parcel.writeLong(startDate != null ? startDate.getTime() : -1);
+        parcel.writeLong(endDate != null ? endDate.getTime() : -1);
+        parcel.writeByte((byte) (isActive ? 1 : 0));
     }
 }

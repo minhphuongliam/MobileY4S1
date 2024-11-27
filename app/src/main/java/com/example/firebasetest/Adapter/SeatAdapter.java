@@ -17,7 +17,7 @@ import java.util.List;
 public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder> {
     private final List<Seat> seatList;
     private final Context context;
-    private OnItemSelectedListener listener;
+    private OnItemSeatSelectedListener listener;
 
     public SeatAdapter(Context context, List<Seat> seatList) {
         this.seatList = seatList;
@@ -29,12 +29,12 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     }
 
     // Bước 1: Tạo Callback Interface
-    public interface OnItemSelectedListener {
-        void onItemSelected(String time, int position);
+    public interface OnItemSeatSelectedListener {
+        void onItemSelected(boolean stats);
     }
 
     // Bước 2: Phương thức để cài đặt Listener từ Activity hoặc Fragment
-    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+    public void setOnItemSelectedListener(OnItemSeatSelectedListener listener) {
         this.listener = listener;
     }
 
@@ -71,12 +71,24 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
                     seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.TAPPING);
                     // Làm mới tất cả các item
                     notifyDataSetChanged();
+
+                    //call back
+                    if (listener != null) {
+                        listener.onItemSelected(true); // Gọi phương thức từ MainActivity hoặc Fragment
+                    }
+
                     break;
                 case TAPPING:
                     // cập nhật status thành available
                     seatList.get(holder.getAdapterPosition()).setStatus(Seat.Status.AVAILABLE);
                     // Làm mới tất cả các item
                     notifyDataSetChanged();
+
+                    //call back
+                    if (listener != null) {
+                        listener.onItemSelected(false); // Gọi phương thức từ MainActivity hoặc Fragment
+                    }
+
                     break;
                 default:
                     break;

@@ -55,6 +55,12 @@
         <activity
             android:name=".Activity.PaymentActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".Activity.MovieDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

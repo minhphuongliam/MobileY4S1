@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,9 +65,9 @@ public class BookingActivity extends AppCompatActivity{
             return insets;
         });
         // Lấy movie, user id từ intent
-        movieid = "1263992";
-        userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
-
+        movieid = getIntent().getStringExtra("movieId");
+        userid = getIntent().getStringExtra("userId");
+        Log.d("tag", movieid + ", " + userid);
 
         // Lấy data từ Firestore
         db = FirebaseFirestore.getInstance();
@@ -229,6 +230,7 @@ public class BookingActivity extends AppCompatActivity{
             //Nhay sang trang sau
             Intent intent = new Intent(this, NextoActivity.class);
             intent.putExtra("booking_data", (Parcelable) booking);
+            Log.d("tag", booking.toString());
             startActivity(intent);
         });
     }

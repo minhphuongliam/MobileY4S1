@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:padding="1dp"
+    android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/seatImg"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="2dp"
+            android:src="@android:color/holo_orange_dark"
+            android:scaleType="centerCrop"
+            android:contentDescription="Seat Image"
+            android:layout_weight="1" />
+</LinearLayout>

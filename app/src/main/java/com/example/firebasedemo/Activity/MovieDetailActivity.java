@@ -2,6 +2,7 @@ package com.example.firebasedemo.Activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import com.bumptech.glide.Glide;
 import com.example.firebasedemo.DTO.CreditDTO;
@@ -117,10 +120,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                             bookNowButton.setVisibility(View.GONE);
                         }
 
-                        // Xử lý sự kiện click "Book Now"
-                        bookNowButton.setOnClickListener(v -> {
-                            Toast.makeText(MovieDetailActivity.this, "Booking " + movie.getTitle(), Toast.LENGTH_SHORT).show();
-                        });
+
                     }
                     // ấn nút play, truyền url để chạy movie
                     playButton.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +131,36 @@ public class MovieDetailActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
+
+                    // Xử lý sự kiện click "Book Now"
+                    bookNowButton.setOnClickListener(v -> {
+                        try{
+                            // Tạo key Master nếu chưa có
+                            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+                            // Đọc EncryptedSharedPreferences
+                            SharedPreferences encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                                    "UserPrefs",
+                                    masterKeyAlias,
+                                    this,
+                                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                            );
+                            // lấy userId từ shared rồi lưu
+                            String userId = encryptedSharedPreferences.getString("userId",null);
+
+                            Toast.makeText(MovieDetailActivity.this, "Booking " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MovieDetailActivity.this, BookingActivity.class);
+                            Log.d("tag", movie.getMovieId().toString());
+                            intent.putExtra("userId", userId);
+                            intent.putExtra("movieId", movie.getMovieId().toString());
+                            startActivity(intent);
+
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
                 });
             } else {
                 runOnUiThread(() -> {

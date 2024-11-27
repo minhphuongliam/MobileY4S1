@@ -14,7 +14,7 @@ import java.util.List;
 
 public class AdAdapter extends RecyclerView.Adapter<AdAdapter.AdViewHolder> {
 
-    private final List<String> adList; // Danh sách URL của các poster
+    private final List<String> adList; // URL list of posters
     private final Context context;
 
     public AdAdapter(Context context, List<String> adList) {

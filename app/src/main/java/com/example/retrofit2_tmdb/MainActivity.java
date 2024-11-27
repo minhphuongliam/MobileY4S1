@@ -8,9 +8,9 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.retrofit2_tmdb.dto.CreditDTO;
+import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.dto.VideoDTO;
 import com.example.retrofit2_tmdb.mapper.MovieMapper;
-import com.example.retrofit2_tmdb.dto.MovieDTO;
 import com.example.retrofit2_tmdb.model.Movie;
 import com.example.retrofit2_tmdb.request.MovieApi;
 import com.example.retrofit2_tmdb.request.Service;

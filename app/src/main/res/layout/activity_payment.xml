@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border_background"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 1. Thông tin vé -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_ticket_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ticket Information"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_movie_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2D Subtitles | Horror | 109 minutes" />
+
+            <TextView
+                android:id="@+id/tv_movie_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2D Subtitles | Horror | 109 minutes" />
+        </LinearLayout>
+
+        <!-- 2. Combo ưu đãi -->
+        <TextView
+            android:id="@+id/tv_combo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Big Combo Offer"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_combos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 3. Thông tin thanh toán -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/border_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Amount: 170,000đ"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discounted Amount: 0đ" />
+
+            <TextView
+                android:id="@+id/tv_amount_due"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Amount to Pay: 170,000đ"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 4. Hình thức thanh toán -->
+        <TextView
+            android:id="@+id/tv_payment_methods_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Choose Payment Method"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RadioGroup
+                android:id="@+id/radio_payment_methods"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rb_domestic_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Domestic Payment Card" />
+
+                <RadioButton
+                    android:id="@+id/rb_international_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="International Payment Card" />
+
+                <RadioButton
+                    android:id="@+id/rb_shopee_pay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ShopeePay Wallet" />
+
+                <RadioButton
+                    android:id="@+id/rb_momo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Momo Wallet" />
+
+                <RadioButton
+                    android:id="@+id/rb_zalopay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ZaloPay Wallet" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pay" />
+    </LinearLayout>
+</ScrollView>
+

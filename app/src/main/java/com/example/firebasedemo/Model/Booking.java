@@ -147,4 +147,18 @@ public class Booking implements Serializable, Parcelable {
         }
         parcel.writeByte((byte) (payed == null ? 0 : payed ? 1 : 2));
     }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "id='" + id + '\'' +
+                ", userID='" + userID + '\'' +
+                ", screening=" + screening +
+                ", seatList=" + seatList +
+                ", bookTime=" + bookTime +
+                ", price=" + price +
+                ", vouchers=" + vouchers +
+                ", payed=" + payed +
+                '}';
+    }
 }

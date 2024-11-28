@@ -21,21 +21,33 @@ import java.util.Map;
 
 public class ComboAdapter extends RecyclerView.Adapter<ComboAdapter.ComboViewHolder> {
 
+    // Interface to notify when combo quantities change
     public interface OnComboQuantityChangeListener {
-        void onQuantityChanged(double totalAmount); // Callback for quantity changes
+        void onQuantityChanged(double totalAmount);
     }
 
     private Context context;
     private List<Combo> combos;
     private Map<Integer, Integer> quantities = new HashMap<>();
     private OnComboQuantityChangeListener quantityChangeListener;
+    private float ticketPrice; // Add ticket price field
 
-    public ComboAdapter(Context context, List<Combo> combos, OnComboQuantityChangeListener listener) {
+    // Updated constructor to accept ticket price
+    public ComboAdapter(Context context, List<Combo> combos,
+                        float ticketPrice,
+                        OnComboQuantityChangeListener listener) {
         this.context = context;
         this.combos = combos;
+        this.ticketPrice = ticketPrice;
         this.quantityChangeListener = listener;
+
+        // Initialize quantities for each combo
         for (int i = 0; i < combos.size(); i++) {
             quantities.put(i, 0);
+        }
+
+        if (quantityChangeListener != null) {
+            quantityChangeListener.onQuantityChanged(ticketPrice);
         }
     }
 
@@ -51,20 +63,21 @@ public class ComboAdapter extends RecyclerView.Adapter<ComboAdapter.ComboViewHol
         Combo combo = combos.get(position);
         int quantity = quantities.get(position);
 
+        // Set combo item details
         holder.tvName.setText(combo.getName());
         holder.tvDescription.setText(combo.getDescription());
         holder.tvPrice.setText(String.format("Price: %.0f $", combo.getPrice()));
         holder.tvQuantity.setText(String.valueOf(quantity));
         Glide.with(context).load(combo.getImageUrl()).into(holder.ivImage);
 
-        // Increase button
+        // Increase button click listener
         holder.btnIncrease.setOnClickListener(v -> {
             quantities.put(position, quantity + 1);
             notifyItemChanged(position);
             notifyTotalAmountChanged();
         });
 
-        // Decrease button
+        // Decrease button click listener
         holder.btnDecrease.setOnClickListener(v -> {
             if (quantity > 0) {
                 quantities.put(position, quantity - 1);
@@ -79,13 +92,18 @@ public class ComboAdapter extends RecyclerView.Adapter<ComboAdapter.ComboViewHol
         return combos.size();
     }
 
+    // Calculate total amount including ticket price and combo prices
     private void notifyTotalAmountChanged() {
-        double totalAmount = 0;
+        double totalAmount = ticketPrice; // Start with ticket price
+
+        // Add combo prices based on their quantities
         for (int i = 0; i < combos.size(); i++) {
-            double price = combos.get(i).getPrice();
+            double comboPrice = combos.get(i).getPrice();
             int quantity = quantities.get(i);
-            totalAmount += price * quantity;
+            totalAmount += comboPrice * quantity;
         }
+
+        // Notify listener with total amount
         if (quantityChangeListener != null) {
             quantityChangeListener.onQuantityChanged(totalAmount);
         }
@@ -108,6 +126,3 @@ public class ComboAdapter extends RecyclerView.Adapter<ComboAdapter.ComboViewHol
         }
     }
 }
-
-
-

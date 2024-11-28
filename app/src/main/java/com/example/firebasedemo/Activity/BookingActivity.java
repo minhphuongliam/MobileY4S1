@@ -65,8 +65,11 @@ public class BookingActivity extends AppCompatActivity{
             return insets;
         });
         // Lấy movie, user id từ intent
-        movieid = getIntent().getStringExtra("movieId");
-        userid = getIntent().getStringExtra("userId");
+//        movieid = getIntent().getStringExtra("movieId");
+//        userid = getIntent().getStringExtra("userId");
+        movieid = "1263992";
+        userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
+
         Log.d("tag", movieid + ", " + userid);
 
         // Lấy data từ Firestore
@@ -185,10 +188,10 @@ public class BookingActivity extends AppCompatActivity{
                                         @Override
                                         public void onItemSelected(boolean stats) {
                                             if (stats){
-                                                totalCost += 70000.0f;
+                                                totalCost += 7.0f;
                                                 totalSeat ++;
                                             }else{
-                                                totalCost -= 70000.0f;
+                                                totalCost -= 7.0f;
                                                 totalSeat --;
                                             }
 
@@ -228,7 +231,7 @@ public class BookingActivity extends AppCompatActivity{
                     false
             );
             //Nhay sang trang sau
-            Intent intent = new Intent(this, NextoActivity.class);
+            Intent intent = new Intent(this, PaymentActivity.class);
             intent.putExtra("booking_data", (Parcelable) booking);
             Log.d("tag", booking.toString());
             startActivity(intent);

@@ -14,28 +14,88 @@
         android:padding="16dp">
 
         <!-- 1. Thông tin vé -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_background"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@drawable/border_background">
 
+            <!-- Movie Title -->
             <TextView
-                android:id="@+id/tv_ticket_info"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_movie_title"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Ticket Information"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:text="Linh Miêu"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Movie Details -->
             <TextView
                 android:id="@+id/tv_movie_details"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="2D Subtitles | Horror | 109 minutes" />
+                android:text="2D Phụ đề | Kinh dị | 109 Phút"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        </LinearLayout>
+            <!-- Screening Date -->
+            <TextView
+                android:id="@+id/tv_screening_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày chiếu: 24/11/2024"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_details"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Screening Time -->
+            <TextView
+                android:id="@+id/tv_screening_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giờ chiếu: 18:00"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_details"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Room -->
+            <TextView
+                android:id="@+id/tv_screening_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phòng chiếu: P4"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_screening_date"
+                android:layout_marginTop="8dp" />
+
+            <!-- Seats -->
+            <TextView
+                android:id="@+id/tv_seats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ghế: A1, A2"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_screening_time"
+                android:layout_marginTop="8dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- 2. Combo ưu đãi -->
         <TextView

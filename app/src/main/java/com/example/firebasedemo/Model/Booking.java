@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +14,11 @@ public class Booking implements Serializable, Parcelable {
     private String id;
     private String userID;
     private Screening screening;
-    private List<Seat> seatList;
+    private List<Seat> seatList = new ArrayList<>();
+    private List<Combo> comboList = new ArrayList<>();
     private Date bookTime;
     private Float price;
-    private List<Voucher> vouchers;
+    private List<Voucher> vouchers = new ArrayList<>();
     private Boolean payed;
 
     public Booking() {
@@ -26,10 +28,10 @@ public class Booking implements Serializable, Parcelable {
         this.id = id;
         this.userID = userID;
         this.screening = screening;
-        this.seatList = seatList;
+        this.seatList = seatList != null ? seatList : new ArrayList<>();
         this.bookTime = bookTime;
         this.price = price;
-        this.vouchers = vouchers;
+        this.vouchers = vouchers != null ? vouchers : new ArrayList<>();
         this.payed = payed;
     }
 
@@ -40,14 +42,10 @@ public class Booking implements Serializable, Parcelable {
         seatList = in.createTypedArrayList(Seat.CREATOR);
         vouchers = in.createTypedArrayList(Voucher.CREATOR);
         long bookTimeMillis = in.readLong();
-        bookTime = bookTimeMillis == -1 ? null : new Date(bookTimeMillis);
-        if (in.readByte() == 0) {
-            price = null;
-        } else {
-            price = in.readFloat();
-        }
+        bookTime = bookTimeMillis != -1 ? new Date(bookTimeMillis) : null;
+        price = in.readByte() == 0 ? null : in.readFloat();
         byte tmpPayed = in.readByte();
-        payed = tmpPayed == 0 ? null : tmpPayed == 1;
+        payed = tmpPayed == 1 ? Boolean.TRUE : tmpPayed == 2 ? Boolean.FALSE : null;
     }
 
     public static final Creator<Booking> CREATOR = new Creator<Booking>() {
@@ -91,7 +89,7 @@ public class Booking implements Serializable, Parcelable {
     }
 
     public void setSeatList(List<Seat> seatList) {
-        this.seatList = seatList;
+        this.seatList = seatList != null ? seatList : new ArrayList<>();
     }
 
     public Date getBookTime() {
@@ -123,7 +121,7 @@ public class Booking implements Serializable, Parcelable {
     }
 
     public void setVouchers(List<Voucher> vouchers) {
-        this.vouchers = vouchers;
+        this.vouchers = vouchers != null ? vouchers : new ArrayList<>();
     }
 
     @Override
@@ -139,13 +137,9 @@ public class Booking implements Serializable, Parcelable {
         parcel.writeTypedList(seatList);
         parcel.writeTypedList(vouchers);
         parcel.writeLong(bookTime != null ? bookTime.getTime() : -1);
-        if (price == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeFloat(price);
-        }
-        parcel.writeByte((byte) (payed == null ? 0 : payed ? 1 : 2));
+        parcel.writeByte(price == null ? (byte) 0 : (byte) 1);
+        if (price != null) parcel.writeFloat(price);
+        parcel.writeByte(payed == null ? 0 : payed ? (byte) 1 : (byte) 2);
     }
 
     @Override
@@ -162,3 +156,4 @@ public class Booking implements Serializable, Parcelable {
                 '}';
     }
 }
+

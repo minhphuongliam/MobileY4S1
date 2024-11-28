@@ -36,7 +36,7 @@ public class MovieDTO implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
 
-    @SerializedName("genreDTOS")
+    @SerializedName("genres")
     private List<GenreDTO> genreDTOS;
 
     @SerializedName("vote_average")

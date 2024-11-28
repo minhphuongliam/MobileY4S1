@@ -196,7 +196,7 @@ public class HomeActivity extends AppCompatActivity {
                                 // Update RecyclerView on the main thread
                                 runOnUiThread(() -> updateRecyclerView(category, movieList));
 
-                                Log.v("Tag", "Added movie: " + movie);
+                                Log.d("Tag", "Added movie: " + movie);
                             } catch (InterruptedException e) {
                                 Log.e("Tag", "Error waiting for API responses: " + e.getMessage());
                             }

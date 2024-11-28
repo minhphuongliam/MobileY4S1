@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:fillViewport="true"
     android:orientation="vertical">
 
@@ -105,7 +106,8 @@
             android:layout_marginBottom="8dp"
             android:text="Big Combo Offer"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_combos"
@@ -127,13 +129,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Total Amount: 0$"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/tv_discount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Discounted Amount: 0$" />
+                android:text="Discounted Amount: 0vnd"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/tv_amount_due"
@@ -141,7 +145,8 @@
                 android:layout_height="wrap_content"
                 android:text="Amount to Pay: 0$"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
         </LinearLayout>
 
         <!-- 4. Hình thức thanh toán -->
@@ -152,7 +157,8 @@
             android:layout_marginBottom="8dp"
             android:text="Choose Payment Method"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -164,37 +170,43 @@
             <RadioGroup
                 android:id="@+id/radio_payment_methods"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:theme="@style/Theme.MaterialComponents">
 
                 <RadioButton
                     android:id="@+id/rb_domestic_card"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Domestic Payment Card" />
+                    android:text="Domestic Payment Card"
+                    android:textColor="@android:color/black"/>
 
                 <RadioButton
                     android:id="@+id/rb_international_card"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="International Payment Card" />
+                    android:text="International Payment Card"
+                    android:textColor="@android:color/black"/>
 
                 <RadioButton
                     android:id="@+id/rb_shopee_pay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ShopeePay Wallet" />
+                    android:text="ShopeePay Wallet"
+                    android:textColor="@android:color/black"/>
 
                 <RadioButton
                     android:id="@+id/rb_momo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Momo Wallet" />
+                    android:text="Momo Wallet"
+                    android:textColor="@android:color/black"/>
 
                 <RadioButton
                     android:id="@+id/rb_zalopay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ZaloPay Wallet" />
+                    android:text="ZaloPay Wallet"
+                    android:textColor="@android:color/black"/>
             </RadioGroup>
         </LinearLayout>
 

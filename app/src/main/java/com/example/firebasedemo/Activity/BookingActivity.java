@@ -188,10 +188,10 @@ public class BookingActivity extends AppCompatActivity{
                                         @Override
                                         public void onItemSelected(boolean stats) {
                                             if (stats){
-                                                totalCost += 7.0f;
+                                                totalCost += 70000.0f;
                                                 totalSeat ++;
                                             }else{
-                                                totalCost -= 7.0f;
+                                                totalCost -= 70000.0f;
                                                 totalSeat --;
                                             }
 

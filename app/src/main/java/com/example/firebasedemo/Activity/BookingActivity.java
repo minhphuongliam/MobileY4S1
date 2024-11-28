@@ -65,10 +65,10 @@ public class BookingActivity extends AppCompatActivity{
             return insets;
         });
         // Lấy movie, user id từ intent
-//        movieid = getIntent().getStringExtra("movieId");
-//        userid = getIntent().getStringExtra("userId");
-        movieid = "1263992";
-        userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
+        movieid = getIntent().getStringExtra("movieId");
+        userid = getIntent().getStringExtra("userId");
+//        movieid = "1263992";
+//        userid = "ymllLaRQpoTur6rM3lfwRDnoZZ43";
 
         Log.d("tag", movieid + ", " + userid);
 

@@ -14,11 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedemo.Adapter.ComboAdapter;
 import com.example.firebasedemo.Api.CreateOrder;
+import com.example.firebasedemo.DTO.BookingDTO;
+import com.example.firebasedemo.DTO.ComboDTO;
+import com.example.firebasedemo.Mapper.BookingMapper;
 import com.example.firebasedemo.Model.Booking;
 import com.example.firebasedemo.Model.Combo;
 import com.example.firebasedemo.Model.Screening;
 import com.example.firebasedemo.Model.Seat;
 import com.example.firebasedemo.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
@@ -26,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import vn.zalopay.sdk.Environment;
 import vn.zalopay.sdk.ZaloPayError;
@@ -78,6 +84,7 @@ public class PaymentActivity extends AppCompatActivity {
         comboList = getCombos();
         setupRecyclerView(comboList, booking.getPrice());
 
+
         // Zalo Payment handling
         StrictMode.ThreadPolicy policy = new
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -103,6 +110,20 @@ public class PaymentActivity extends AppCompatActivity {
                         ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
                             @Override
                             public void onPaymentSucceeded(String s, String s1, String s2) {
+                                //Pushing data to db
+                                List<ComboDTO> comboDTOList = new ArrayList<>();
+                                Map<Integer, Integer> quantities = ((ComboAdapter)recyclerView.getAdapter()).getQuantities();
+                                for (Map.Entry<Integer, Integer> set : quantities.entrySet()) {
+                                    Combo combo = comboList.get(set.getKey());
+                                    comboDTOList.add(new ComboDTO(combo.getName(),
+                                            combo.getDescription(),
+                                            combo.getPrice(),
+                                            combo.getImageUrl(),
+                                            set.getValue()));
+                                }
+                                BookingDTO bookingDTO = BookingMapper.mapToBookingDTO(booking, comboDTOList);
+                                pushBookingToDb(bookingDTO);
+
                                 Toast.makeText(PaymentActivity.this, "Payement success", Toast.LENGTH_LONG).show();
                             }
 
@@ -125,6 +146,21 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
 
+    public static boolean pushBookingToDb(BookingDTO bookingDTO){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        AtomicBoolean res = new AtomicBoolean(false);
+
+        db.collection("booking")
+                .add(bookingDTO)
+                .addOnSuccessListener(documentReference -> {
+                    Log.v("Tag", "Booking added successfully") ;
+                    res.set(true);
+                })
+                .addOnFailureListener(e -> Log.v("Tag", "Error adding voucher: " + e));
+
+        return res.get();
+    }
     // Initialize all UI components.
     private void initUI() {
         tvTotalAmount = findViewById(R.id.tv_total);

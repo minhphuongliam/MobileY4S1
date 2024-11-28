@@ -24,6 +24,18 @@ public class Booking implements Serializable, Parcelable {
     public Booking() {
     }
 
+    public Booking(String id, String userID, Screening screening, List<Seat> seatList, List<Combo> comboList, Date bookTime, Float price, List<Voucher> vouchers, Boolean payed) {
+        this.id = id;
+        this.userID = userID;
+        this.screening = screening;
+        this.seatList = seatList;
+        this.comboList = comboList;
+        this.bookTime = bookTime;
+        this.price = price;
+        this.vouchers = vouchers;
+        this.payed = payed;
+    }
+
     public Booking(String id, String userID, Screening screening, List<Seat> seatList, Date bookTime, Float price, List<Voucher> vouchers, Boolean payed) {
         this.id = id;
         this.userID = userID;
@@ -59,6 +71,14 @@ public class Booking implements Serializable, Parcelable {
             return new Booking[size];
         }
     };
+
+    public List<Combo> getComboList() {
+        return comboList;
+    }
+
+    public void setComboList(List<Combo> comboList) {
+        this.comboList = comboList;
+    }
 
     public String getId() {
         return id;

@@ -51,6 +51,10 @@ public class ComboAdapter extends RecyclerView.Adapter<ComboAdapter.ComboViewHol
         }
     }
 
+    public Map<Integer, Integer> getQuantities() {
+        return quantities;
+    }
+
     @NonNull
     @Override
     public ComboViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

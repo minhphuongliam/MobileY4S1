@@ -2,12 +2,9 @@ package com.example.firebasedemo.Activity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.firebasedemo.CustomPlayerUiController;
@@ -25,8 +22,8 @@ public class TrailerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trailer);
-        // String videoId = getIntent().getStringExtra("VIDEO_ID");
-        String videoId = "QJ8E9R70csY";
+        String videoId = getIntent().getStringExtra("VIDEO_ID");
+        //String videoId = "QJ8E9R70csY";
 
         youTubePlayerView = findViewById(R.id.youtube_player_view);
         youTubePlayerView.setEnableAutomaticInitialization(false);

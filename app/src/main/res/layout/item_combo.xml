@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@drawable/border_background">
+
+    <!-- Combo image-->
+    <ImageView
+        android:id="@+id/iv_combo_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop" />
+
+    <!-- Combo informations -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <!-- Combo name -->
+        <TextView
+            android:id="@+id/tv_combo_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"/>
+
+        <!-- Combo description -->
+        <TextView
+            android:id="@+id/tv_combo_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/black"/>
+
+        <!-- Combo price-->
+        <TextView
+            android:id="@+id/tv_combo_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+    <!-- Increasing/decreasing button -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:layout_marginHorizontal="8dp" />
+
+        <Button
+            android:id="@+id/btn_decrease"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="-" />
+
+
+        <Button
+            android:id="@+id/btn_increase"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="+" />
+
+    </LinearLayout>
+
+</LinearLayout>

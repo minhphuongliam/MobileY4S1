@@ -66,6 +66,13 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.play.services.safetynet)
+    implementation(libs.androidx.activity)
+    implementation(fileTree(mapOf(
+        "dir" to "C:\\Users\\84328\\nguhoc\\Desktop\\Mobile Application Development\\ZaloPay",
+        "include" to listOf("*.aar", "*.jar"),
+        "exclude" to listOf("")
+    )))
+    implementation(files("C:\\Users\\84328\\nguhoc\\Desktop\\Mobile Application Development\\ZaloPay\\zpdk-release-v3.1.aar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -94,4 +101,8 @@ dependencies {
     implementation ("androidx.security:security-crypto:1.1.0-alpha04")
     // firestore
     implementation ("com.google.firebase:firebase-firestore:24.7.0")
+    // for zalopay
+    implementation("com.squareup.okhttp3:okhttp:4.6.0")
+    implementation("commons-codec:commons-codec:1.14")
+
 }

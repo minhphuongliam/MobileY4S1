@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/border_background"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 1. Thông tin vé -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@drawable/border_background">
+
+            <!-- Movie Title -->
+            <TextView
+                android:id="@+id/tv_movie_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Linh Miêu"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Movie Details -->
+            <TextView
+                android:id="@+id/tv_movie_details"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="2D Phụ đề | Kinh dị | 109 Phút"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Screening Date -->
+            <TextView
+                android:id="@+id/tv_screening_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày chiếu: 24/11/2024"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_details"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Screening Time -->
+            <TextView
+                android:id="@+id/tv_screening_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giờ chiếu: 18:00"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_movie_details"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Room -->
+            <TextView
+                android:id="@+id/tv_screening_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phòng chiếu: P4"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_screening_date"
+                android:layout_marginTop="8dp" />
+
+            <!-- Seats -->
+            <TextView
+                android:id="@+id/tv_seats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ghế: A1, A2"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_screening_time"
+                android:layout_marginTop="8dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 2. Combo ưu đãi -->
+        <TextView
+            android:id="@+id/tv_combo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Big Combo Offer"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_combos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 3. Thông tin thanh toán -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/border_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Amount: 0$"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/tv_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Discounted Amount: 0vnd"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/tv_amount_due"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Amount to Pay: 0$"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"/>
+        </LinearLayout>
+
+        <!-- 4. Hình thức thanh toán -->
+        <TextView
+            android:id="@+id/tv_payment_methods_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Choose Payment Method"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <RadioGroup
+                android:id="@+id/radio_payment_methods"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/Theme.MaterialComponents">
+
+                <RadioButton
+                    android:id="@+id/rb_domestic_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Domestic Payment Card"
+                    android:textColor="@android:color/black"/>
+
+                <RadioButton
+                    android:id="@+id/rb_international_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="International Payment Card"
+                    android:textColor="@android:color/black"/>
+
+                <RadioButton
+                    android:id="@+id/rb_shopee_pay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ShopeePay Wallet"
+                    android:textColor="@android:color/black"/>
+
+                <RadioButton
+                    android:id="@+id/rb_momo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Momo Wallet"
+                    android:textColor="@android:color/black"/>
+
+                <RadioButton
+                    android:id="@+id/rb_zalopay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ZaloPay Wallet"
+                    android:textColor="@android:color/black"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pay" />
+    </LinearLayout>
+</ScrollView>
+
